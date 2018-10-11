@@ -7,7 +7,7 @@ WIP EARLY STAGE
 * made components for main, profile, comments, photos, post, and navigation
 * connected express server to react
 * placeholders are in place for main and profile page.
-* started on styling
+* started on styling with Bulma.io
 
 ### TO-DO:
 * make components for login, register and upload
@@ -25,8 +25,8 @@ set PORT=3001 && node server.js
 
 run react
 ```
-cd client
-npm react
+cd react
+npm start
 ```
 
 # Screenshots:
