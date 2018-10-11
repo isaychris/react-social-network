@@ -1,0 +1,119 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px;
+}
+
+.user-content {
+  position: relative;
+}
+
+.image.is-square img {
+  object-fit: cover;
+
+}
+
+.tags {
+  margin: 0px !important;
+  margin-top: 10px !important;
+}
+
+.overlay {
+  position: relative;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  transition: .2s ease;
+}
+
+.user-content:hover>.overlay {
+  position: absolute;
+  background-color: #000;
+  opacity: 0.4;
+}
+
+.main {
+  width: 650px;
+  margin: auto;
+  margin-top: 100px;
+}
+
+.profile {
+  width: 1000px;
+  margin: auto;
+  margin-top: 100px;
+}
+
+
+.navbar {
+  border-bottom: 1px solid lightgray;
+}
+
+.profile-avatar {
+  height: 200px;
+  width: 200px;
+  padding: 21px;
+}
+
+h1.title {
+  margin-bottom: 0px !important;
+}
+
+.profile-options {
+  margin-top: 10px;
+}
+
+
+.image {
+  border-radius: 20px;
+}
+
+.card-content {
+  padding: 15px;
+}
+
+.card-header-content {
+  padding: 21px;
+}
+
+.stats ul {
+  padding: 0px;
+  list-style: none;
+  margin: 0px;
+}
+
+.stats li {
+  display: inline;
+}
+
+.comments ul {
+  padding: 0px;
+  list-style: none;
+  margin: 0px;
+  margin-bottom: 7px;
+  overflow-y: scroll;
+  max-height: 400px;
+}
+
+.comments li {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+.comments .comment-username {
+  font-weight: bold;
+}
+
+.like {
+  float: right;
+}
+
+.card {
+  margin-bottom: 50px;
+}
+
+.content-options time {
+  float: right;
+}
