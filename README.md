@@ -30,5 +30,7 @@ npm start
 ```
 
 # Screenshots:
-![Image](https://i.imgur.com/dX3VULZ.png)
-![Image](https://i.imgur.com/eJvQDCR.png)
+![Image](https://i.imgur.com/e7JNcGa.png)
+![Image](https://i.imgur.com/5URMvYC.png)
+![Image](https://i.imgur.com/SyEyMT0.png)
+![Image](https://i.imgur.com/EZeZdqS.png)

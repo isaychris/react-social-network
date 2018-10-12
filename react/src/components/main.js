@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
-import Post from './post'
+import Sidebar from './sidebar'
+import Posts from './posts'
 
 class Main extends Component {
     render() {
         return(
             <div className="main">
-                <Post/>
-                <Post/>
-                <Post/>
-                <Post/>
-                <Post/>
-                <Post/>
+                <div className="grid-container">
+                    <Sidebar/>
+                    <Posts/>
+                </div>            
             </div>
          )
     }

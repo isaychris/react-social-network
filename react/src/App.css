@@ -1,3 +1,9 @@
+.main {
+  width: 1200px;
+  margin: auto;
+  margin-top: 100px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -35,16 +41,52 @@
 }
 
 .main {
-  width: 650px;
-  margin: auto;
   margin-top: 100px;
 }
+
+.grid-container {
+  display: grid;
+  height: 100%;
+  grid-template-columns: 300px 600px;
+  grid-template-rows: 1fr;
+  grid-gap: 22px 25px;
+  grid-template-areas: "sidebar posts";
+}
+
+.sidebar {
+  grid-area: sidebar;
+}
+
+.posts {
+  grid-area: posts;
+}
+
+
 
 .profile {
   width: 1000px;
   margin: auto;
   margin-top: 100px;
 }
+
+.login,
+.register {
+  width: 400px;
+  margin: auto;
+  margin-top: 100px;
+}
+
+#preview {
+  display: block;
+  margin: auto;
+}
+
+.upload {
+  width: 700px;
+  margin: auto;
+  margin-top: 100px;
+}
+
 
 
 .navbar {
@@ -86,11 +128,12 @@ h1.title {
 
 .stats li {
   display: inline;
+  margin-right: 20px;
 }
 
 .comments ul {
   padding: 0px;
-  list-style: none;
+  list-style: none !important;
   margin: 0px;
   margin-bottom: 7px;
   overflow-y: scroll;
