@@ -10,7 +10,8 @@ class Upload extends Component {
             username: this.props.logged,
             file: null,
             uuid: undefined,
-            redirect: false
+            redirect: false,
+            progress: false,
         }
     }
     handleChange = (e) => {
@@ -41,10 +42,11 @@ class Upload extends Component {
             let extension = image.type.split('/')[1]
             let new_name = uuid + '.' + extension
 
-            let upload_task = firebase.storage().ref(`/images/${this.state.username}/${new_name}`).put(image)
-            upload_task.on('state_changed', 
-            (snapshot) => {
+            this.setState({progress: true})
 
+            let upload_task = firebase.storage().ref(`/images/${this.state.username}/${new_name}`).put(image)
+            upload_task.on('state_changed', (snapshot) => {
+                this.progress.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             },(error) => {
                 console.log(error)
             }, () => {
@@ -100,8 +102,10 @@ class Upload extends Component {
                     <div>
                     <img className="is-center is-rounded" id="preview" src=""/>
                     </div><br/>
+
+                    <progress className="progress is-primary" ref={(progress) => this.progress = progress} style={{display: this.state.progress === true ? 'block' : 'none' }} max="100" ></progress>
+
                     <textarea id="description" className="textarea" placeholder="Description"></textarea><br/>
-        
                     <button className="button is-primary" onClick={this.handleUpload}>Submit</button>   
                 </div>
                 </div>

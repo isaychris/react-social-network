@@ -28,7 +28,7 @@ class App extends Component {
               <Route path="/" render={()=><Main logged={this.state.logged} />} exact/>
               <Route path="/upload" render={()=><Upload logged={this.state.logged} />} exact/>
               <Route path="/u/:username" component={Profile} exact/>
-              <Route path="/p/:id" component={View} exact/>
+              <Route path="/p/:id" render={(props)=><View logged={this.state.logged} {...props}/>} exact/>
               <Route path="/login" component={Login} exact/>
               <Route path="/register" component={Register} exact/>
               <Route path="*" component={Error}/>

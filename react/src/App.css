@@ -114,9 +114,20 @@
   margin-top: 10px;
 }
 
-
 .image {
   border-radius: 20px;
+}
+
+hr {
+  margin: 5px 0 !important;
+}
+
+.content-options {
+  margin-bottom: 5px;
+}
+
+span.comment {
+  margin-left: 5px;
 }
 
 .card-content {

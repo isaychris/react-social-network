@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
 import Post from '../post'
 
-const Posts = () => {
+const Posts = (props) => {
     return (
         <div className="posts">
-            <Post/>
-            <Post/>
-            <Post/>
-            <Post/>
-            <Post/>
-            <Post/>
+          <Post logged={props.logged} post_id="8Obu_xgzm"/>
+          <Post logged={props.logged} post_id="ldrmuo432"/>
     </div>
     )
 }

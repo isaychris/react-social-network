@@ -8,6 +8,7 @@ WIP EARLY STAGE
 * Uploading photos to firebase storage
 * Adding posts to firebase database
 * Retrieving posts from firebase database to display on webpage.
+* Commenting
 * Uploaded photos show in profile page.
 * Placeholders for comments/profile pic/main
 * Error page redirection
@@ -16,8 +17,9 @@ WIP EARLY STAGE
 * Connected express backend with react
 
 ### TO-DO:
-* set up redux
-* add comments
+* set up redux 
+* show posts from followed users in main page
+* ~~add comments~~
 * delete photos
 * follow / unfollow
 * like / unlike

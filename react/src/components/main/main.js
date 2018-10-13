@@ -6,7 +6,7 @@ class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: this.props.logged,
+            logged: this.props.logged,
         }
     }
 
@@ -15,7 +15,7 @@ class Main extends Component {
             <div className="main">
                 <div className="grid-container">
                     <Sidebar/>
-                    <Posts/>
+                    <Posts logged={this.state.logged}/>
                 </div>            
             </div>
          )

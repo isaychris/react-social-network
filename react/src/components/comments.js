@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
+import { BrowserRouter, Route, Link } from 'react-router-dom'
 
-const Comments = () => {
+const Comments = (props) => {
+    const commentslist = props.data.map((obj, index) => {
+      let link = "/u/" + obj.username
+      return (<li key={index}><span className="comment-username"><Link to={link}>{obj.username}</Link></span> <span className="comment">{obj.comment}</span></li>
+      ) 
+  })
+
     return (
         <div className="comments">
         <ul>
-          <li><span className="comment-username">username</span> <span className="comment">Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.</span></li>
-          <li><span className="comment-username">username</span> <span className="comment">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span></li>
-          <li><span className="comment-username">username</span> <span className="comment">Lorem ipsum dolor sit amet </span></li>
-          <li><span className="comment-username">username</span> <span className="comment">Lorem ipsum dolor </span></li>
+         {commentslist}
         </ul>
       </div>
     );
