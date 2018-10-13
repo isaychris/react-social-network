@@ -4,6 +4,13 @@
   margin-top: 100px;
 }
 
+.view {
+  width: 600px;
+  margin: auto;
+  margin-top: 100px;
+}
+
+
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -99,7 +106,7 @@
   padding: 21px;
 }
 
-h1.title {
+.profile-info h1 {
   margin-bottom: 0px !important;
 }
 

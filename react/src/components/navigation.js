@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Link } from 'react-router-dom'
 
-const Navigation = () => {
+const Navigation = (props) => {
+    let profile_link = "/u/" + props.logged
+
     return (
         <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation">
         <div className="navbar-brand">
@@ -42,7 +44,7 @@ const Navigation = () => {
                         </div>
                         <div className="dropdown-menu" id="dropdown-menu3" role="menu">
                             <div className="dropdown-content">
-                            <Link to="/profile" className="dropdown-item">
+                            <Link to={profile_link}  className="dropdown-item">
                                 My Profile
                             </Link>
                             <Link to="/upload" className="dropdown-item">

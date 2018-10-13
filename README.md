@@ -3,18 +3,30 @@ A photosharing social network powered by ReactJS, Express, Redux, Firebase
 
 WIP EARLY STAGE
 
-### Progress:
-* made components for main, profile, comments, photos, post, and navigation
-* connected express server to react
-* placeholders are in place for main and profile page.
-* started on styling with Bulma.io
+### Working:
+* made components for main, profile, upload, auth and navigation page
+* Uploading photos to firebase storage
+* Adding posts to firebase database
+* Retrieving posts from firebase database to display on webpage.
+* Uploaded photos show in profile page.
+* Placeholders for comments/profile pic/main
+* Error page redirection
+* Routing
+* Connected firebase database with react
+* Connected express backend with react
 
 ### TO-DO:
-* make components for login, register and upload
-* set up firebase
 * set up redux
+* add comments
+* delete photos
+* follow / unfollow
+* like / unlike
+* edit photo description
+* edit profile description
+* change profile picture
+* make search page
 * authentication
-* ???
+* account management
 
 ### Setup:
 run express backend
@@ -34,3 +46,4 @@ npm start
 ![Image](https://i.imgur.com/5URMvYC.png)
 ![Image](https://i.imgur.com/SyEyMT0.png)
 ![Image](https://i.imgur.com/EZeZdqS.png)
+![Image](https://i.imgur.com/njY9o00.png)
