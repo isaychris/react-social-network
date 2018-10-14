@@ -1,8 +1,17 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Link } from 'react-router-dom'
+import firebase from "../config/firebase_config"
 
 const Navigation = (props) => {
     let profile_link = "/u/" + props.logged
+      
+    function handleClick() {
+        firebase.auth().signOut().then(() => {
+            props.updateLogged(null)
+          }, function(error) {
+            alert('Sign Out Error', error);
+          });
+    }
 
     return (
         <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation">
@@ -29,12 +38,12 @@ const Navigation = (props) => {
         <div className="navbar-end">
             <div className="navbar-item">
                 <div className="buttons">
-                    <Link to="/register" className="button is-primary">
-                    <strong>Sign up</strong>
-                    </Link>
-                    <Link to="/login" className="button is-light">Log in</Link>
 
-                    <div className="dropdown is-hoverable is-right">
+                    <Link to="/register" className="button is-primary" style={{display: !props.logged ? 'block' : 'none' }}><strong>Sign up</strong></Link>
+                    <Link to="/login" className="button is-light" style={{display: !props.logged ? 'block' : 'none' }}>Log in</Link>
+                    <Link to="/" className="button is-light" onClick={() => handleClick() }  style={{display: props.logged ? 'block' : 'none' }}>Logout</Link>
+
+                    <div className="dropdown is-hoverable is-right" style={{display: props.logged ? 'block' : 'none' }}>
                         <div className="dropdown-trigger">
                             <button className="button" aria-haspopup="true" aria-controls="dropdown-menu3">
                             <span className="icon is-small">

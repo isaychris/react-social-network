@@ -5,17 +5,14 @@ import Posts from './posts'
 class Main extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            logged: this.props.logged,
-        }
     }
 
     render() {
         return(
             <div className="main">
                 <div className="grid-container">
-                    <Sidebar/>
-                    <Posts logged={this.state.logged}/>
+                    <Sidebar logged={this.props.logged}/>
+                    <Posts logged={this.props.logged}/>
                 </div>            
             </div>
          )

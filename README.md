@@ -4,7 +4,8 @@ A photosharing social network powered by ReactJS, Express, Redux, Firebase
 WIP EARLY STAGE
 
 ### Working:
-* made components for main, profile, upload, auth and navigation page
+* Login / Registering
+* Authentication
 * Uploading photos to firebase storage
 * Adding posts to firebase database
 * Retrieving posts from firebase database to display on webpage.
@@ -13,21 +14,21 @@ WIP EARLY STAGE
 * Placeholders for comments/profile pic/main
 * Error page redirection
 * Routing
+* made components for main, profile, upload, auth and navigation page
 * Connected firebase database with react
 * Connected express backend with react
 
 ### TO-DO:
 * set up redux 
+* ~~authentication~~
 * show posts from followed users in main page
 * ~~add comments~~
-* delete photos
+* delete posts
 * follow / unfollow
 * like / unlike
-* edit photo description
 * edit profile description
 * change profile picture
 * make search page
-* authentication
 * account management
 
 ### Setup:

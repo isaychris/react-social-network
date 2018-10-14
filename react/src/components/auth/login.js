@@ -1,25 +1,50 @@
 import React, { Component } from 'react';
+import firebase from "../../config/firebase_config"
+import { Redirect } from 'react-router-dom'
 
 class Login extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            redirect: false
+        }
+    }
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+
+        firebase.auth().signInWithEmailAndPassword(this.email.value, this.pass.value).then(()=> {
+            this.setState({redirect: true})
+        }).catch((error) => {
+            alert(error.message)
+        })
+    }
+
     render() {
-        return(
-            <div className="login">
-                <div className="card">
-                    <div className="card-header">
-                        <p className="card-header-title is-centered">
-                        Login
-                        </p>
-                    </div>
-                    <div className="card-content">
-                        <input className="input is-centered" type="text" placeholder="Username"></input>
-                        <br/><br/>
-                        <input className="input is-centered" type="password" placeholder="Password"></input>
-                        <br/><br/>
-                        <button className="button is-primary is-fullwidth">Enter</button>
+        if(this.state.redirect) {
+            return <Redirect to="/"/>
+        } else {
+            return(
+                <div className="login">
+                    <div className="card">
+                        <div className="card-header">
+                            <p className="card-header-title is-centered">
+                            Login
+                            </p>
+                        </div>
+                        <div className="card-content">
+                        <form onSubmit={this.handleSubmit}>
+                            <input ref={(email) => this.email = email} className="input is-centered" type="email" placeholder="Username"></input>
+                            <br/><br/>
+                            <input ref={(pass) => this.pass = pass} className="input is-centered" type="password" placeholder="Password"></input>
+                            <br/><br/>
+                            <button type="submit" className="button is-primary is-fullwidth">Enter</button>
+                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-         )
+            )
+        }
     }
 }
 

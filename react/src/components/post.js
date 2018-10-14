@@ -7,7 +7,6 @@ class Post extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            logged: props.logged,
             username: undefined,
             time: undefined,
             description: undefined,
@@ -31,11 +30,11 @@ class Post extends Component {
         e.preventDefault();
 
         firebase.database().ref(`/comments`).child(this.state.post_id).push({
-          username: this.state.logged,
+          username: this.props.logged,
           comment: this.input.value
       }).then((snap) => {
           console.log(snap)
-          let new_comment = {username: this.state.logged, comment: this.input.value}
+          let new_comment = {username: this.props.logged, comment: this.input.value}
           this.setState({comments: [...this.state.comments, new_comment]})
 
           this.input.value = ""
@@ -95,10 +94,10 @@ class Post extends Component {
 
                     <Comments data={this.state.comments}/>
     
-                    <form onSubmit={this.handleSubmit}>
+                    <form onSubmit={this.handleSubmit} style={{display: this.props.logged ? 'block' : 'none' }}>
                       <div className="field has-addons">
                         <div className="control is-expanded">
-                          <input ref={(input) => this.input = input} className="input" type="text" placeholder="Add a comment"/>
+                          <input ref={(input) => this.input = input} className="input" type="text" placeholder="Add a comment" />
                         </div>
                         <div className="control">
                           <button className="button is-primary" type="submit">
