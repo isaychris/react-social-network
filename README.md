@@ -1,7 +1,8 @@
 # react-social-network
 A photosharing social network powered by ReactJS, Express and Firebase Storage / Authentication / Real-Time Database
 
-WIP EARLY STAGE
+![Image](https://i.imgur.com/e7JNcGa.png)
+WIP WIP WIP WIP WIP WIP
 
 ### Working:
 * Login / Registering with Email
