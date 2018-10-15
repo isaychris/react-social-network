@@ -66,15 +66,6 @@ class Profile extends Component {
                 this.setState({redirect: true})
             }
         });
-        
-        let accountsref = app.database().ref(`/accounts`);
-        accountsref.orderByChild('username').equalTo(this.state.username).once("value", (snapshot) => {
-            if(snapshot.val()) {
-                this.addPhotos();
-            } else {
-                this.setState({redirect: true})
-            }
-        });
 
         app.database().ref(`/accounts/${this.props.uid}/following`).orderByChild('username').equalTo(this.state.username).once("value", (snapshot) => {
             if(snapshot.val()) {
