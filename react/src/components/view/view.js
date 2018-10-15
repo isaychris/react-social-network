@@ -4,16 +4,12 @@ import Post from '../post'
 class View extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            logged: props.logged,
-            post_id: props.match.params.id,
-        }
     }
 
     render() {
         return (
           <div className="view">
-            <Post logged={this.state.logged} post_id={this.state.post_id}/>
+            <Post logged={this.props.logged} post_id={this.props.match.params.id}/>
           </div>
         )
     }

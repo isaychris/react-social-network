@@ -79,21 +79,21 @@ class App extends Component {
             <Navigation auth={this.authenticated} logged={logged} updateAuthLogged={this.updateAuthLogged}/>
             <Switch>
               <PrivateRoute exact path="/" component={Main} logged={logged} authenticated={authenticated}/>
-              <PrivateRoute exact path="/upload" component={Upload} authenticated={authenticated}/>
+              <PrivateRoute exact path="/upload" component={Upload} logged={logged} authenticated={authenticated}/>
               <Route path="/login" render={()=>
                 (authenticated ? <Redirect to="/"/> : <Login updateAuthLogged={this.updateAuthLogged} />)} exact/>
               <Route path="/register" render={()=>
                 (authenticated ? <Redirect to="/"/> : <Register logged={logged}/>)} exact/>
-
               <Route path="/select" render={()=><Select logged={logged} updateLogged={this.updateLogged}/>} exact/>
-              <Route path="/u/:username" render={(props)=><Profile uid={uid} {...props} />} exact/>
+              
+              <Route path="/u/:username" render={(props)=><Profile logged={logged} uid={uid} {...props} />} exact/>
               <Route path="/p/:id" render={(props)=><View logged={logged} {...props} />} exact/>
               <Route path="*" component={Error}/>
             </Switch>
         </div>
       </BrowserRouter>
     )
-  }
+}
 }
 
 export default App;

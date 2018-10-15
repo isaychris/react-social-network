@@ -27,6 +27,11 @@ class Post extends Component {
     }
 
     handleLike = () => {
+      if(!this.props.logged) {
+        alert("You must be logged in to do that.")
+        return
+      }
+
       if(!this.state.liked) {
         app.database().ref(`/posts/${this.state.post_id}/liked`).push({
           username: this.props.logged
@@ -53,6 +58,11 @@ class Post extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
 
+        if(!this.props.logged) {
+          alert("You must be logged in to do that.")
+          return
+        }
+        
         app.database().ref(`/comments`).child(this.state.post_id).push({
           username: this.props.logged,
           comment: this.input.value

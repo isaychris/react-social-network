@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {app} from "../../config/firebase_config"
+import firebase from "firebase"
 import shortid from 'shortid'
 import { Redirect } from 'react-router-dom'
 
@@ -7,7 +8,6 @@ class Upload extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            username: this.props.logged,
             file: null,
             uuid: undefined,
             redirect: false,
@@ -37,6 +37,7 @@ class Upload extends Component {
 
     handleUpload = (e) => {
         if(this.state.file) {
+            alert(this.props.logged)
             let image = this.state.file
             let uuid = shortid.generate()
             let extension = image.type.split('/')[1]
@@ -44,19 +45,19 @@ class Upload extends Component {
 
             this.setState({progress: true})
 
-            let upload_task = app.storage().ref(`/images/${this.state.username}/${new_name}`).put(image)
+            let upload_task = app.storage().ref(`/images/${this.props.logged}/${new_name}`).put(image)
             upload_task.on('state_changed', (snapshot) => {
                 this.progress.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             },(error) => {
                 console.log(error)
             }, () => {
                 
-                app.storage().ref(`images/${this.state.username}`).child(new_name).getDownloadURL().then((url) => {
+                app.storage().ref(`images/${this.props.logged}`).child(new_name).getDownloadURL().then((url) => {
                     let description = document.querySelector("#description").value;
 
                     app.database().ref('/posts').child(uuid).set({
-                        username: this.state.username,
-                        time: app.database.ServerValue.TIMESTAMP,
+                        username: this.props.logged,
+                        time: firebase.database.ServerValue.TIMESTAMP,
                         description: description,
                         image: url,
                     }).then((snap) => {

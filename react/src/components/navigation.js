@@ -24,7 +24,7 @@ const Navigation = (props) => {
         } else {
             return (
                 <div>
-                    <Link to="/login" onClick={() => handleClick()} className="button is-light">Signout</Link>
+                    <Link to="/login" onClick={() => handleClick()} className="button is-light">Sign out</Link>
                     <div className="dropdown is-hoverable is-right">
                         <div className="dropdown-trigger">
                             <button className="button" aria-haspopup="true" aria-controls="dropdown-menu3">
