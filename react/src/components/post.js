@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Comments from './comments'
-import firebase from "../config/firebase_config"
+import {app} from "../config/firebase_config"
 import { Redirect, Link } from 'react-router-dom'
 
 class Post extends Component {
@@ -13,11 +13,11 @@ class Post extends Component {
             post_id: props.post_id,
             image: undefined,
             comments: [],
+            liked: false,
         }
     }
 
-      updatePost = (snapshot) => {
-        console.log(snapshot.val().time)
+    updatePost = (snapshot) => {
         this.setState({
           username: snapshot.val().username,
           description: snapshot.val().description,
@@ -26,10 +26,34 @@ class Post extends Component {
         })
     }
 
+    handleLike = () => {
+      if(!this.state.liked) {
+        app.database().ref(`/posts/${this.state.post_id}/liked`).push({
+          username: this.props.logged
+        }).then((snap) => {
+            this.setState({liked: true})
+        }).catch(error => {
+            console.log(error)
+        })
+      } else {
+        app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.props.logged).once("value", (snapshot) => {
+          if(snapshot.val()) {
+              snapshot.forEach((snap) => {
+                  if(snap.val().username === this.state.username) {
+                      snap.ref.remove()
+                      this.setState({liked: false})
+                      return
+                  }
+                })
+              }
+            })
+          }
+  }
+
     handleSubmit = (e) => {
         e.preventDefault();
 
-        firebase.database().ref(`/comments`).child(this.state.post_id).push({
+        app.database().ref(`/comments`).child(this.state.post_id).push({
           username: this.props.logged,
           comment: this.input.value
       }).then((snap) => {
@@ -44,7 +68,7 @@ class Post extends Component {
     }
 
     componentDidMount = () => {
-      firebase.database().ref(`/posts/${this.state.post_id}`).once('value', (snapshot) => {
+      app.database().ref(`/posts/${this.state.post_id}`).once('value', (snapshot) => {
           if(snapshot.val()) {
             this.updatePost(snapshot);
           } else {
@@ -52,7 +76,13 @@ class Post extends Component {
           }
       });
 
-      let commentsref = firebase.database().ref(`/comments/${this.state.post_id}`);
+      app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.props.logged).once("value", (snapshot) => {
+        if(snapshot.val()) {
+          this.setState({liked: true})
+        } 
+      });
+
+      let commentsref = app.database().ref(`/comments/${this.state.post_id}`);
       commentsref.once("value", (snapshot) => {
           if(snapshot.val()) {
             Object.entries(snapshot.val()).forEach(([key, val]) => {
@@ -69,31 +99,36 @@ class Post extends Component {
             return (
                 <div className="post">
                 <div className="card">
-                <header className="card-header">
-                  <div className="media">
+                <header>
+                  <div className="media is-fullwidth">
                     <figure className="image is-48x48">
-                      <img src="https://picsum.photos/200/?random" alt="Placeholder image"/>
+                      <img src="https://picsum.photos/200/?random" alt=""/>
                     </figure>
                     <p className="card-header-title content-username">
                       <Link to={`/u/${this.state.username}`}>{this.state.username}</Link>
                     </p>
+                    <Link target="_blank" to={"/p/".concat(`${this.state.post_id}`)}><button className="button is-light is-small is-pulled-right share">Share</button></Link> 
+
                   </div>
                 </header>
           
                 <div className="card-image">
                   <figure className="image">
-                    <img src={this.state.image}/>
+                    <img src={this.state.image} alt=""/>
                   </figure>
                 </div>
                 <div className="card-content">
                   <div className="content">
-                    <div className="content-options"><button className="button is-danger is-outlined is-small">Like</button>
-                      <time className="content-time">{this.state.time}</time></div>
+                    <div className="content-options">
+                      {this.state.liked ? <button onClick={this.handleLike} className="button is-danger is-small">Unlike</button>
+                      :
+                      <button onClick={this.handleLike} className="button is-danger is-outlined is-small">Like</button>
+                      }
+                    <time className="content-time">{this.state.time}</time></div>
                     <div className="content-body">{this.state.description}</div>
                       <hr/>
+                      {this.props.logged && <Comments data={this.state.comments}/>}
 
-                    <Comments data={this.state.comments}/>
-    
                     <form onSubmit={this.handleSubmit} style={{display: this.props.logged ? 'block' : 'none' }}>
                       <div className="field has-addons">
                         <div className="control is-expanded">

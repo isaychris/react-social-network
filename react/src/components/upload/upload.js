@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import firebase from "../../config/firebase_config"
+import {app} from "../../config/firebase_config"
 import shortid from 'shortid'
 import { Redirect } from 'react-router-dom'
 
@@ -44,19 +44,19 @@ class Upload extends Component {
 
             this.setState({progress: true})
 
-            let upload_task = firebase.storage().ref(`/images/${this.state.username}/${new_name}`).put(image)
+            let upload_task = app.storage().ref(`/images/${this.state.username}/${new_name}`).put(image)
             upload_task.on('state_changed', (snapshot) => {
                 this.progress.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             },(error) => {
                 console.log(error)
             }, () => {
                 
-                firebase.storage().ref(`images/${this.state.username}`).child(new_name).getDownloadURL().then((url) => {
+                app.storage().ref(`images/${this.state.username}`).child(new_name).getDownloadURL().then((url) => {
                     let description = document.querySelector("#description").value;
 
-                    firebase.database().ref('/posts').child(uuid).set({
+                    app.database().ref('/posts').child(uuid).set({
                         username: this.state.username,
-                        time: firebase.database.ServerValue.TIMESTAMP,
+                        time: app.database.ServerValue.TIMESTAMP,
                         description: description,
                         image: url,
                     }).then((snap) => {
@@ -100,7 +100,7 @@ class Upload extends Component {
                     </label>
                     </div><br/>
                     <div>
-                    <img className="is-center is-rounded" id="preview" src=""/>
+                    <img className="is-center is-rounded" id="preview" alt="" src=""/>
                     </div><br/>
 
                     <progress className="progress is-primary" ref={(progress) => this.progress = progress} style={{display: this.state.progress === true ? 'block' : 'none' }} max="100" ></progress>

@@ -1,49 +1,31 @@
-import React, { Component } from 'react';
-import { BrowserRouter, Route, Link } from 'react-router-dom'
-import firebase from "../config/firebase_config"
+import React from 'react';
+import { Link } from 'react-router-dom'
+import {app} from "../config/firebase_config"
 
 const Navigation = (props) => {
-    let profile_link = "/u/" + props.logged
-      
     function handleClick() {
-        firebase.auth().signOut().then(() => {
-            props.updateLogged(null)
+        app.auth().signOut().then(() => {
+            props.updateAuthLogged(false, null, null)
           }, function(error) {
             alert('Sign Out Error', error);
           });
     }
 
-    return (
-        <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-        <div className="navbar-brand">
-            <a className="navbar-item" href="/">
-            <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28"/>
-            </a>
+    function buttonsDisplay(logged) {
+        let profile_link = "/u/" + props.logged
 
-            <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            </a>
-        </div>
-
-        <div className="navbar-start" id="search-nav">
-            <div className="navbar-item">
-                <p className="control">
-                    <input className="input" type="text" placeholder="Search"/>
-                </p>
-            </div>
-        </div>
-
-        <div className="navbar-end">
-            <div className="navbar-item">
-                <div className="buttons">
-
-                    <Link to="/register" className="button is-primary" style={{display: !props.logged ? 'block' : 'none' }}><strong>Sign up</strong></Link>
-                    <Link to="/login" className="button is-light" style={{display: !props.logged ? 'block' : 'none' }}>Log in</Link>
-                    <Link to="/" className="button is-light" onClick={() => handleClick() }  style={{display: props.logged ? 'block' : 'none' }}>Logout</Link>
-
-                    <div className="dropdown is-hoverable is-right" style={{display: props.logged ? 'block' : 'none' }}>
+        if(!logged) {
+            return (
+                <div>
+                    <Link to="/register" className="button is-primary"><strong>Sign up</strong></Link>
+                    <Link to="/login" className="button is-light">Log in</Link>
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    <Link to="/login" onClick={() => handleClick()} className="button is-light">Signout</Link>
+                    <div className="dropdown is-hoverable is-right">
                         <div className="dropdown-trigger">
                             <button className="button" aria-haspopup="true" aria-controls="dropdown-menu3">
                             <span className="icon is-small">
@@ -62,8 +44,32 @@ const Navigation = (props) => {
 
                             </div>
                         </div>
-                        </div>
+                    </div>
+                </div>
+            )
+        }
+    }
 
+    return (
+        <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+        <div className="navbar-brand">
+            <Link to="/" className="navbar-item">
+            <img src="https://bulma.io/images/bulma-logo.png" alt="" width="112" height="28"/>
+            </Link>
+        </div>
+
+        <div className="navbar-start" id="search-nav">
+            <div className="navbar-item">
+                <p className="control">
+                    <input className="input" type="text" placeholder="Search"/>
+                </p>
+            </div>
+        </div>
+
+        <div className="navbar-end">
+            <div className="navbar-item">
+                <div className="buttons">
+                { buttonsDisplay(props.logged) }
                 </div>
             </div>
         </div>

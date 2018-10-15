@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import firebase from "../../config/firebase_config"
+import {app} from "../../config/firebase_config"
 import { Redirect } from 'react-router-dom'
 
 class Login extends Component {
@@ -13,8 +13,8 @@ class Login extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
 
-        firebase.auth().signInWithEmailAndPassword(this.email.value, this.pass.value).then(()=> {
-            this.setState({redirect: true})
+        app.auth().signInWithEmailAndPassword(this.email.value, this.pass.value).then((obj)=> {
+            this.props.updateAuthLogged(true, obj.user.displayName, obj.user.uid)
         }).catch((error) => {
             alert(error.message)
         })

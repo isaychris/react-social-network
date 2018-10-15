@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import firebase from "../../config/firebase_config"
+import {app} from "../../config/firebase_config"
 import { Redirect } from 'react-router-dom'
 
 class Select extends Component {
@@ -18,14 +18,14 @@ class Select extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
 
-        let accountsref = firebase.database().ref(`/accounts`);
+        let accountsref = app.database().ref(`/accounts`);
         accountsref.orderByChild('username').equalTo(this.user.value).once("value", (snapshot) => {
             if(snapshot.val()) {
                 alert("Username already exists. Try Again.")
             } else {
-                firebase.auth().onAuthStateChanged(authUser => {
+                app.auth().onAuthStateChanged(authUser => {
                     if(authUser) {
-                        firebase.database().ref('/accounts').child(authUser.uid).set({
+                        app.database().ref('/accounts').child(authUser.uid).set({
                             username: this.user.value
                         }).then(() => {
                             authUser.updateProfile({

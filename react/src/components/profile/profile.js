@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Photos from './photos'
-import firebase from "../../config/firebase_config"
+import {app} from "../../config/firebase_config"
 import { Redirect } from 'react-router-dom'
 
 class Profile extends Component {
@@ -14,12 +14,33 @@ class Profile extends Component {
             following_num: 0,
             follow: false,
             photos: [],
-            redirect: false
+            redirect: false,
         }
     }
 
+    handleFollow = () => {
+        if(!this.state.follow) {
+            app.database().ref(`/accounts/${this.props.uid}`).child("following").push({
+                username: this.state.username
+            }).then(() => {
+                this.setState({follow: true})
+            })
+        } else {
+            app.database().ref(`/accounts/${this.props.uid}/following`).orderByChild('username').equalTo(this.state.username).once("value", (snapshot) => {
+                if(snapshot.val()) {
+                    snapshot.forEach((snap) => {
+                        if(snap.val().username === this.state.username) {
+                            snap.ref.remove()
+                            this.setState({follow: false})
+                            return
+                        }
+                    })
+                }
+            })
+        }
+    }
     addPhotos = () => {
-        let postsref = firebase.database().ref(`/posts`);
+        let postsref = app.database().ref(`/posts`);
         postsref.orderByChild('username').equalTo(this.state.username).once("value", (snapshot) => {
             if(snapshot.val()) {
                 Object.entries(snapshot.val()).forEach(([key, val]) => {
@@ -32,7 +53,7 @@ class Profile extends Component {
     }
 
     componentWillMount = () => {
-        let accountsref = firebase.database().ref(`/accounts`);
+        let accountsref = app.database().ref(`/accounts`);
         accountsref.orderByChild('username').equalTo(this.state.username).once("value", (snapshot) => {
             if(snapshot.val()) {
                 this.addPhotos();
@@ -40,6 +61,12 @@ class Profile extends Component {
                 this.setState({redirect: true})
             }
         });
+
+        app.database().ref(`/accounts/${this.props.uid}/following`).orderByChild('username').equalTo(this.state.username).once("value", (snapshot) => {
+            if(snapshot.val()) {
+                this.setState({follow: true})
+            }
+        })
     }
 
     render() {
@@ -51,7 +78,7 @@ class Profile extends Component {
             <div className="card">
                 <header className="card-header">
                     <figure className="image profile-avatar">
-                        <img className="is-rounded" src="https://picsum.photos/200/?random" alt="Placeholder image"/>
+                        <img className="is-rounded" src="https://picsum.photos/200/?random" alt=""/>
                     </figure>
                     <div className="card-header-content profile-info">
                         <h1 className="title">{this.state.username}</h1>
@@ -65,7 +92,12 @@ class Profile extends Component {
                         <p>
                             Lorem ipsum dolor sit amet consectetur adipisicing elit.
                         </p>
-                        <div className="profile-options"> <button className="button is-primary is-outlined">Follow</button>
+                        <div className="profile-options">
+                        {this.state.follow ? 
+                            <button onClick={this.handleFollow} className="button is-primary is-small">Unfollow</button>
+                            :
+                            <button onClick={this.handleFollow} className="button is-primary is-outline is-small">Follow</button>
+                        }
                         </div>
                     </div>
 
@@ -74,7 +106,6 @@ class Profile extends Component {
                     <div className="tabs is-centered">
                         <ul>
                         <li className="is-active"><a>Posts</a></li>
-                        <li><a>Tagged</a></li>
                         <li><a>Liked</a></li>
                         </ul>
                     </div>

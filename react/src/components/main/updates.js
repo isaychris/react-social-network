@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 const Updates = () => {
     return(
@@ -10,7 +10,7 @@ const Updates = () => {
                 <td>
                     <div className="media">
                         <figure className="image is-32x32">
-                        <img src="https://picsum.photos/200/?random" alt="Placeholder image"/>
+                        <img src="https://picsum.photos/200/?random" alt=""/>
                         </figure>
                         <div className="media-right">
                             <span>username</span>
@@ -23,7 +23,7 @@ const Updates = () => {
                 <td>
                     <div className="media">
                         <figure className="image is-32x32">
-                        <img src="https://picsum.photos/200/?random" alt="Placeholder image"/>
+                        <img src="https://picsum.photos/200/?random" alt=""/>
                         </figure>
                         <div className="media-right">
                             <span>username</span>

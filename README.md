@@ -1,35 +1,35 @@
 # react-social-network
-A photosharing social network powered by ReactJS, Express, Redux, Firebase
+A photosharing social network powered by ReactJS, Express and Firebase Storage / Authentication / Real-Time Database
 
 WIP EARLY STAGE
 
 ### Working:
-* Login / Registering
-* Authentication
-* Uploading photos to firebase storage
-* Adding posts to firebase database
-* Retrieving posts from firebase database to display on webpage.
+* Login / Registering with Email
+* Username selection
+* Uploading photos and description
+* Displaying photos and comments
 * Commenting
-* Uploaded photos show in profile page.
-* Placeholders for comments/profile pic/main
+* Liking photos
+* Following users
+* Sharing link
+* Profile Page shows uploaded photos
+
+* Front-end routing
 * Error page redirection
-* Routing
-* made components for main, profile, upload, auth and navigation page
-* Connected firebase database with react
-* Connected express backend with react
+* Protected routes
+* Express backend connected to react
+* Authentication with Firebase Auth
+* File storage with Firebase Storage
+* Database with Firebase Real-Time Database
 
 ### TO-DO:
-* set up redux 
-* ~~authentication~~
-* show posts from followed users in main page
-* ~~add comments~~
-* delete posts
-* follow / unfollow
-* like / unlike
-* edit profile description
-* change profile picture
-* make search page
-* account management
+* Set up redux if needed ...
+* Display photos from followed users in main page
+* Delete photos functionality
+* Edit profile description functionality
+* Change profile picture functionality
+* Search functionality
+* Account management
 
 ### Setup:
 run express backend

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import firebase from "../../config/firebase_config"
+import {app} from "../../config/firebase_config"
 import { Redirect } from 'react-router-dom'
 
 class Register extends Component {
@@ -15,7 +15,7 @@ class Register extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
 
-        firebase.auth().createUserWithEmailAndPassword(this.email.value, this.pass.value).then((obj)=> {
+        app.auth().createUserWithEmailAndPassword(this.email.value, this.pass.value).then((obj)=> {
             this.setState({redirect: true})
         }).catch((error) => {
             alert(error.message)

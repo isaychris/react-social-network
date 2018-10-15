@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { BrowserRouter, Route, Link } from 'react-router-dom'
+import React from 'react';
+import { Link } from 'react-router-dom'
 
 const Comments = (props) => {
     const commentslist = props.data.map((obj, index) => {
