@@ -1,7 +1,9 @@
 # react-social-network
 A photosharing social network powered by ReactJS, Express and Firebase Storage / Authentication / Real-Time Database
 
-![Image](https://i.imgur.com/aN6ZMF4.png)
+### Video Preview:
+[![Image](https://i.imgur.com/tRuPxiN.png)](https://streamable.com/uyrrw)
+
 
 ### Working:
 * Login / Registering with Email
@@ -15,7 +17,6 @@ A photosharing social network powered by ReactJS, Express and Firebase Storage /
 * Main Page shows posts from followed users
 * Main Page shows user updates in side bar
 * Placeholder images for profile pictures
-
 * Front-end routing
 * Error page redirection
 * Protected routes
@@ -25,12 +26,13 @@ A photosharing social network powered by ReactJS, Express and Firebase Storage /
 * Database with Firebase Real-Time Database
 
 ### TO-DO:
-* Set up redux if needed ...
+* Sorting by time
 * Delete photos functionality
 * Edit profile description functionality
 * Change profile picture functionality
 * Search functionality
 * Account management
+* Set up redux if needed ...
 
 ### Setup:
 run express backend
