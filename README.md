@@ -1,12 +1,10 @@
 # react-social-network
 A photosharing social network powered by ReactJS, Express and Firebase Storage / Authentication / Real-Time Database
 
-![Image](https://i.imgur.com/e7JNcGa.png)
-WIP WIP WIP WIP WIP WIP
+![Image](https://i.imgur.com/aN6ZMF4.png)
 
 ### Working:
 * Login / Registering with Email
-* Username selection
 * Uploading photos and description
 * Displaying photos and comments
 * Commenting
@@ -14,6 +12,9 @@ WIP WIP WIP WIP WIP WIP
 * Following users
 * Sharing link
 * Profile Page shows uploaded photos
+* Main Page shows posts from followed users
+* Main Page shows user updates in side bar
+* Placeholder images for profile pictures
 
 * Front-end routing
 * Error page redirection
@@ -25,7 +26,6 @@ WIP WIP WIP WIP WIP WIP
 
 ### TO-DO:
 * Set up redux if needed ...
-* Display photos from followed users in main page
 * Delete photos functionality
 * Edit profile description functionality
 * Change profile picture functionality
@@ -46,8 +46,8 @@ npm start
 ```
 
 # Screenshots:
-![Image](https://i.imgur.com/e7JNcGa.png)
-![Image](https://i.imgur.com/5URMvYC.png)
-![Image](https://i.imgur.com/SyEyMT0.png)
-![Image](https://i.imgur.com/EZeZdqS.png)
-![Image](https://i.imgur.com/njY9o00.png)
+![Image](https://i.imgur.com/aN6ZMF4.png)
+![Image](https://i.imgur.com/HiUDaVO.png)
+![Image](https://i.imgur.com/JgMipsA.png)
+![Image](https://i.imgur.com/iavy9y6.png)
+![Image](https://i.imgur.com/5ZjK7sv.png)

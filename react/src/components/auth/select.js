@@ -25,8 +25,10 @@ class Select extends Component {
             } else {
                 app.auth().onAuthStateChanged(authUser => {
                     if(authUser) {
-                        app.database().ref('/accounts').child(authUser.uid).set({
-                            username: this.user.value
+                        
+                        app.database().ref('/profile').child(this.user.value).set({
+                            uid: authUser.uid,
+                            description: "No description"
                         }).then(() => {
                             authUser.updateProfile({
                                 displayName: this.user.value,

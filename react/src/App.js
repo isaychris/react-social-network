@@ -70,7 +70,7 @@ class App extends Component {
     const {logged, authenticated, uid, loading} = this.state
     
     if(loading) {
-      return <p> loading...</p>;
+      return null;
     }
 
     return(
@@ -83,7 +83,7 @@ class App extends Component {
               <Route path="/login" render={()=>
                 (authenticated ? <Redirect to="/"/> : <Login updateAuthLogged={this.updateAuthLogged} />)} exact/>
               <Route path="/register" render={()=>
-                (authenticated ? <Redirect to="/"/> : <Register logged={logged}/>)} exact/>
+                (authenticated ? <Redirect to="/"/> : <Register logged={logged} updateLogged={this.updateLogged}/>)} exact/>
               <Route path="/select" render={()=><Select logged={logged} updateLogged={this.updateLogged}/>} exact/>
               
               <Route path="/u/:username" render={(props)=><Profile logged={logged} uid={uid} {...props} />} exact/>

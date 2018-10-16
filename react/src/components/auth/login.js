@@ -34,7 +34,7 @@ class Login extends Component {
                         </div>
                         <div className="card-content">
                         <form onSubmit={this.handleSubmit}>
-                            <input ref={(email) => this.email = email} className="input is-centered" type="email" placeholder="Username"></input>
+                            <input ref={(email) => this.email = email} className="input is-centered" type="email" placeholder="Email"></input>
                             <br/><br/>
                             <input ref={(pass) => this.pass = pass} className="input is-centered" type="password" placeholder="Password"></input>
                             <br/><br/>

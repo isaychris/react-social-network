@@ -18,7 +18,6 @@ class Upload extends Component {
         let type = e.target.files[0].type
         let name = e.target.files[0].name   
 
-        console.log(e.target.files[0])
         if (type.includes("image")) {
             this.setState({file: e.target.files[0]})
 
@@ -37,7 +36,6 @@ class Upload extends Component {
 
     handleUpload = (e) => {
         if(this.state.file) {
-            alert(this.props.logged)
             let image = this.state.file
             let uuid = shortid.generate()
             let extension = image.type.split('/')[1]
@@ -61,6 +59,7 @@ class Upload extends Component {
                         description: description,
                         image: url,
                     }).then((snap) => {
+                            app.database().ref(`/profile/${this.props.logged}/last_update`).set(firebase.database.ServerValue.TIMESTAMP)
                         this.setState({redirect: true, uuid: uuid })
                     })
                 })
