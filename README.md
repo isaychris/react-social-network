@@ -7,15 +7,15 @@ A photosharing social network powered by ReactJS, Express and Firebase Storage /
 
 ### Working:
 * Login / Registering with Email
-* Uploading photos and description
-* Displaying photos and comments
+* Uploading photos w/ description
 * Commenting
 * Liking photos
 * Following users
 * Sharing link
-* Profile Page shows uploaded photos
-* Main Page shows posts from followed users
-* Main Page shows user updates in side bar
+* Profile pages
+* Changing profile pic and bio
+* Displaying photos from followed users in main
+* Displaying updates from followed users in sidebar
 * Front-end routing
 * Error page redirection
 * Protected routes
@@ -26,6 +26,7 @@ A photosharing social network powered by ReactJS, Express and Firebase Storage /
 
 ### TO-DO:
 * Sorting by time
+* Update counters for likes, followers, following
 * Delete photos functionality
 * Search functionality
 * Account management
