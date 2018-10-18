@@ -8,6 +8,7 @@ class Post extends Component {
         super(props);
         this.state = {
             username: undefined,
+            profile_pic: undefined,
             time: undefined,
             description: undefined,
             post_id: props.post_id,
@@ -86,6 +87,12 @@ class Post extends Component {
           }
       });
 
+      app.storage().ref(`profile/${this.props.logged}`).child("profile").getDownloadURL().then((url) => {
+        this.setState({profile_pic: url})
+      }).catch((error) => {
+          this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
+      })
+
       app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.props.logged).once("value", (snapshot) => {
         if(snapshot.val()) {
           this.setState({liked: true})
@@ -112,7 +119,7 @@ class Post extends Component {
                 <header>
                   <div className="media is-fullwidth">
                     <figure className="image is-48x48">
-                      <img src="https://picsum.photos/200/?random" alt=""/>
+                      <img src={this.state.profile_pic} alt=""/>
                     </figure>
                     <p className="card-header-title content-username">
                       <Link to={`/u/${this.state.username}`}>{this.state.username}</Link>

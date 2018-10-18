@@ -16,7 +16,6 @@ A photosharing social network powered by ReactJS, Express and Firebase Storage /
 * Profile Page shows uploaded photos
 * Main Page shows posts from followed users
 * Main Page shows user updates in side bar
-* Placeholder images for profile pictures
 * Front-end routing
 * Error page redirection
 * Protected routes
@@ -28,28 +27,27 @@ A photosharing social network powered by ReactJS, Express and Firebase Storage /
 ### TO-DO:
 * Sorting by time
 * Delete photos functionality
-* Edit profile description functionality
-* Change profile picture functionality
 * Search functionality
 * Account management
 * Set up redux if needed ...
 
 ### Setup:
-run express backend
+run express backend in seperate terminal
 ```
 cd react-social-network
 set PORT=3001 && node server.js
 ```
 
-run react
+run react development server
 ```
 cd react
 npm start
 ```
 
 # Screenshots:
-![Image](https://i.imgur.com/aN6ZMF4.png)
-![Image](https://i.imgur.com/HiUDaVO.png)
-![Image](https://i.imgur.com/JgMipsA.png)
-![Image](https://i.imgur.com/iavy9y6.png)
+![Image](https://i.imgur.com/b5gOnFZ.png)
+![Image](https://i.imgur.com/FSbuaPz.png)
+![Image](https://i.imgur.com/Ub7WROS.png)
+![Image](https://i.imgur.com/snUvPFp.png)
+![Image](https://i.imgur.com/ByvHIGQ.png)
 ![Image](https://i.imgur.com/5ZjK7sv.png)

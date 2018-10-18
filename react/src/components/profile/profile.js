@@ -8,6 +8,7 @@ class Profile extends Component {
         super(props);
 
         this.state = {
+            profile_pic: undefined,
             username: props.match.params.username,
             description: undefined,
             posts_num: 0,
@@ -77,6 +78,12 @@ class Profile extends Component {
                 this.setState({follow: true})
             }
         })
+
+        app.storage().ref(`profile/${this.props.logged}`).child("profile").getDownloadURL().then((url) => {
+            this.setState({profile_pic: url})
+        }).catch((error) => {
+            this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
+        })
     }
 
     render() {
@@ -88,7 +95,7 @@ class Profile extends Component {
             <div className="card">
                 <header className="card-header">
                     <figure className="image profile-avatar">
-                        <img className="is-rounded" src="https://picsum.photos/200/?random" alt=""/>
+                        <img className="is-rounded" src={this.state.profile_pic} alt=""/>
                     </figure>
                     <div className="card-header-content profile-info">
                         <h1 className="title">{this.state.username}</h1>

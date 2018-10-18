@@ -24,6 +24,7 @@ const Navigation = (props) => {
         } else {
             return (
                 <div>
+                    <Link to="/upload" className="button is-primary">Upload</Link>
                     <Link to="/login" onClick={() => handleClick()} className="button is-light">Sign out</Link>
                     <div className="dropdown is-hoverable is-right">
                         <div className="dropdown-trigger">
@@ -38,8 +39,8 @@ const Navigation = (props) => {
                             <Link to={profile_link}  className="dropdown-item">
                                 My Profile
                             </Link>
-                            <Link to="/upload" className="dropdown-item">
-                                Upload
+                            <Link to="/settings" className="dropdown-item">
+                                Settings
                             </Link>
 
                             </div>

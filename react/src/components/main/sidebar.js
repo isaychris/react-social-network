@@ -15,11 +15,20 @@ class Sidebar extends Component {
     componentWillMount = () => { 
         this.props.following.forEach((user) => {
             app.database().ref(`/profile/${user}`).once("value", (snapshot) => {
-                if(snapshot.val()) {
-                    let value = {
-                        username: snapshot.key,
-                        last_update: snapshot.val().last_update}
-                    this.setState({data: [...this.state.data, value]})
+                if(snapshot.val()) {    
+                    app.storage().ref(`profile/${user}`).child("profile").getDownloadURL().then((url) => {
+                        let value = {
+                            profile_pic: url,
+                            username: snapshot.key,
+                            last_update: snapshot.val().last_update}
+                        this.setState({data: [...this.state.data, value]})
+                    }).catch((error) => {
+                        let value = {
+                            profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media",
+                            username: snapshot.key,
+                            last_update: snapshot.val().last_update}
+                        this.setState({data: [...this.state.data, value]})
+                    })
                 }
             })
         })

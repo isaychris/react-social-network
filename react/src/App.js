@@ -6,8 +6,8 @@ import Upload from './components/upload/upload'
 import Login from './components/auth/login'
 import Register from './components/auth/register'
 import View from './components/view/view'
-import Select from './components/auth/select'
 import Error from './components/error'
+import Settings from './components/settings/settings'
 
 import PrivateRoute from './components/auth/privateRoute'
 import {app} from "./config/firebase_config"
@@ -80,11 +80,12 @@ class App extends Component {
             <Switch>
               <PrivateRoute exact path="/" component={Main} logged={logged} authenticated={authenticated}/>
               <PrivateRoute exact path="/upload" component={Upload} logged={logged} authenticated={authenticated}/>
+              <PrivateRoute exact path="/settings" component={Settings} logged={logged} authenticated={authenticated}/>
+
               <Route path="/login" render={()=>
                 (authenticated ? <Redirect to="/"/> : <Login updateAuthLogged={this.updateAuthLogged} />)} exact/>
               <Route path="/register" render={()=>
                 (authenticated ? <Redirect to="/"/> : <Register logged={logged} updateLogged={this.updateLogged}/>)} exact/>
-              <Route path="/select" render={()=><Select logged={logged} updateLogged={this.updateLogged}/>} exact/>
               
               <Route path="/u/:username" render={(props)=><Profile logged={logged} uid={uid} {...props} />} exact/>
               <Route path="/p/:id" render={(props)=><View logged={logged} {...props} />} exact/>

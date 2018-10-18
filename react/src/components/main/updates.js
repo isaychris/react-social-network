@@ -12,7 +12,7 @@ const Updates = (props) => {
             <td>
                 <div className="media">
                     <figure className="image is-32x32">
-                    <img src="https://picsum.photos/200/?random" alt=""/>
+                    <img src={obj.profile_pic} alt=""/>
                     </figure>
                     <div className="media-right">
                         <Link to={`/u/${obj.username}`}>{obj.username}</Link>
