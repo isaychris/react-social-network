@@ -11,10 +11,12 @@ class Post extends Component {
             profile_pic: undefined,
             time: undefined,
             description: undefined,
+            edit: false,
             post_id: props.post_id,
             image: undefined,
             comments: [],
             liked: false,
+            render: true,
         }
     }
 
@@ -56,6 +58,38 @@ class Post extends Component {
           }
   }
 
+    handleDelete = () => {
+      let input = window.confirm("Are you sure you want to delete this photo?")
+
+      if(input) {
+        app.database().ref(`/posts`).child(this.state.post_id).remove().then(() => {
+          alert("Photo deleted!")
+          this.setState({render: false})
+        })
+      }
+
+      if(this.props.updateRedirect) {
+        this.props.updateRedirect(true, "profile")
+      }
+    }
+
+    handleSave = () => {
+      app.database().ref(`/posts/${this.state.post_id}/description`).set(this.state.description).then(() => {
+        this.setState({edit: false})
+        alert("saved")
+      }).catch((error) => {
+        alert(error)
+      })
+    }
+
+    handleEdit = () => {
+      this.setState({edit: true})
+    }
+
+    handleEditChange = (e) => {
+      this.setState({description: e.target.value})
+    }
+
     handleSubmit = (e) => {
         e.preventDefault();
 
@@ -83,14 +117,14 @@ class Post extends Component {
           if(snapshot.val()) {
             this.updatePost(snapshot);
           } else {
-              this.setState({redirect: true})
+              this.props.updateRedirect(true, "error")
           }
-      });
-
-      app.storage().ref(`profile/${this.props.logged}`).child("profile").getDownloadURL().then((url) => {
-        this.setState({profile_pic: url})
-      }).catch((error) => {
-          this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
+      }).then(() => {
+        app.storage().ref(`profile/${this.state.username}`).child("profile").getDownloadURL().then((url) => {
+          this.setState({profile_pic: url})
+        }).catch((error) => {
+            this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
+        })
       })
 
       app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.props.logged).once("value", (snapshot) => {
@@ -109,10 +143,39 @@ class Post extends Component {
       });
     }
 
+    displayPhotosDropdown = () => {
+      if(this.state.username == this.props.logged) {
+        return (   
+          <div className="dropdown is-hoverable is-right is-small photo-dropdown">
+          <div className="dropdown-trigger">
+              <button className="button" aria-haspopup="true" aria-controls="dropdown-menu3">
+              <span className="icon is-small" style={{height: 0 + "px"}}>
+                  <i className="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+              </button>
+          </div>
+          <div className="dropdown-menu" id="dropdown-menu3" role="menu">
+              <div className="dropdown-content">
+              <a onClick={this.handleEdit} className="dropdown-item">
+                  Edit
+              </a>
+              <a onClick={this.handleDelete} className="dropdown-item">
+                  Delete
+              </a>
+
+              </div>
+          </div>
+      </div>
+        )
+      } else {
+        return null
+      }
+    }
     render() {
       if(this.state.redirect) {
         return <Redirect to="/error"/>
       } else {
+        if(this.state.render) {
             return (
                 <div className="post">
                 <div className="card">
@@ -125,6 +188,8 @@ class Post extends Component {
                       <Link to={`/u/${this.state.username}`}>{this.state.username}</Link>
                     </p>
                     <Link target="_blank" to={"/p/".concat(`${this.state.post_id}`)}><button className="button is-light is-small is-pulled-right share">Share</button></Link> 
+                    
+                    {this.displayPhotosDropdown()}
 
                   </div>
                 </header>
@@ -142,7 +207,18 @@ class Post extends Component {
                       <button onClick={this.handleLike} className="button is-danger is-outlined is-small">Like</button>
                       }
                     <time className="content-time">{this.state.time}</time></div>
-                    <div className="content-body">{this.state.description}</div>
+                    <div className="content-body"  ref={(desc) => this.desc = desc}>
+                    {
+                      this.state.edit ? (
+                        <div>
+                          <textarea class='textarea' rows='1' onChange={this.handleEditChange}>{this.state.description}</textarea><br/>
+                          <button class='button is-primary is-small' onClick={this.handleSave}>Save</button><br/>
+                      </div>
+                      ) : 
+                      (this.state.description)
+                    }
+                    
+                    </div>
                       <hr/>
                       {this.props.logged && <Comments data={this.state.comments}/>}
 
@@ -164,7 +240,10 @@ class Post extends Component {
                 </div>
                 </div>
         );
+        } else {
+          return null
         }
+      }
     }
 }
 
