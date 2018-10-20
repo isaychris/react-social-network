@@ -27,22 +27,52 @@ class Profile extends Component {
           }
 
         if(!this.state.follow) {
+            // follow the profile user; add them to logged users following list and increment num
             app.database().ref(`/profile/${this.props.logged}/following`).push({
                 username: this.state.username
             }).then(() => {
+                app.database().ref(`/profile/${this.props.logged}/following_num`).transaction((value) => {
+                    return value + 1;
+                  });
                 this.setState({
                     follow: true,
                     followers_num: this.state.followers_num + 1})
             })
+
+            // add logged user to profile users follwers list and increment num.
+            app.database().ref(`/profile/${this.state.username}/followers`).push({
+                username: this.props.logged
+            }).then(() => {
+                app.database().ref(`/profile/${this.state.username}/followers_num`).transaction((value) => {
+                    return value + 1;
+                  });
+            })
         } else {
+
+            // unfollow the profile user; remove them from logged users following list and decrement num
             app.database().ref(`/profile/${this.props.logged}/following`).orderByChild('username').equalTo(this.state.username).on("child_added", (snapshot) => {
                 if(snapshot.val()) {
                     if(snapshot.val().username === this.state.username) {
                         snapshot.ref.remove()
+                        app.database().ref(`/profile/${this.props.logged}/following_num`).transaction((value) => {
+                            return value - 1;
+                          });
                         this.setState({
                         follow: false,
                         followers_num: this.state.followers_num - 1})
                     }
+                }
+            })
+
+            //remove logged user from profile users follwers list and decrement num
+            app.database().ref(`/profile/${this.state.username}/followers`).orderByChild('username').equalTo(this.props.logged).on("child_added", (snapshot) => {
+                if(snapshot.val()) {
+                    if(snapshot.val().username === this.props.logged) {
+                        snapshot.ref.remove()
+                        app.database().ref(`/profile/${this.state.username}/followers_num`).transaction((value) => {
+                            return value - 1;
+                          });
+                        }
                 }
             })
         }
@@ -62,11 +92,28 @@ class Profile extends Component {
         });
     }
 
+    addPhotos = () => {
+        let postsref = app.database().ref(`/posts`);
+        postsref.orderByChild('username').equalTo(this.state.username).once("value", (snapshot) => {
+            if(snapshot.val()) {
+                this.setState({posts_num: snapshot.numChildren()})
+                Object.entries(snapshot.val()).forEach(([key, val]) => {
+                    val.id = key
+                    this.setState({photos: [...this.state.photos, val]})
+                });
+                this.setState({posts: this.state.photos.length})
+            }
+        });
+    }
     componentWillMount = () => {
         let accountsref = app.database().ref(`/profile/${this.state.username}`);
         accountsref.once("value", (snapshot) => {
             if(snapshot.val()) {
-                this.setState({description: snapshot.val().description})
+                this.setState({
+                    description: snapshot.val().description, 
+                    followers_num: snapshot.val().followers_num,
+                    following_num: snapshot.val().following_num
+                })
                 this.addPhotos();
             } else {
                 this.setState({redirect: true})
@@ -79,7 +126,7 @@ class Profile extends Component {
             }
         })
 
-        app.storage().ref(`profile/${this.props.logged}`).child("profile").getDownloadURL().then((url) => {
+        app.storage().ref(`profile/${this.state.username}`).child("profile").getDownloadURL().then((url) => {
             this.setState({profile_pic: url})
         }).catch((error) => {
             this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})

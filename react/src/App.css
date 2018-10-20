@@ -21,6 +21,10 @@
   margin-top: 10px;
 }
 
+.likes-num {
+  margin-left: 10px;
+  font-size: 13px;
+}
 
 .photo-dropdown button {
   height: 27px;

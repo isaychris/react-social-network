@@ -15,6 +15,7 @@ class Post extends Component {
             post_id: props.post_id,
             image: undefined,
             comments: [],
+            likes_num: 0,
             liked: false,
             render: true,
         }
@@ -25,7 +26,8 @@ class Post extends Component {
           username: snapshot.val().username,
           description: snapshot.val().description,
           time: new Date(snapshot.val().time).toDateString(),
-          image: snapshot.val().image
+          image: snapshot.val().image,
+          likes_num: snapshot.val().like_num
         })
     }
 
@@ -36,10 +38,15 @@ class Post extends Component {
       }
 
       if(!this.state.liked) {
-        app.database().ref(`/posts/${this.state.post_id}/liked`).push({
+        let likeref = app.database().ref(`/posts/${this.state.post_id}/liked`)
+        
+        likeref.push({
           username: this.props.logged
         }).then((snap) => {
-            this.setState({liked: true})
+          app.database().ref(`/posts/${this.state.post_id}/like_num`).transaction((like) => {
+            return like + 1;
+          });
+          this.setState({liked: true, likes_num: this.state.likes_num + 1})
         }).catch(error => {
             console.log(error)
         })
@@ -49,7 +56,10 @@ class Post extends Component {
               snapshot.forEach((snap) => {
                   if(snap.val().username === this.state.username) {
                       snap.ref.remove()
-                      this.setState({liked: false})
+                      app.database().ref(`/posts/${this.state.post_id}/like_num`).transaction((like) => {
+                        return like - 1;
+                      });
+                      this.setState({liked: false, likes_num: this.state.likes_num - 1})
                       return
                   }
                 })
@@ -143,6 +153,13 @@ class Post extends Component {
       });
     }
 
+    displayLikesNum = () => {
+      if(this.state.likes_num == 1) {
+        return <span className="likes-num">{this.state.likes_num} <label>like</label></span>
+      } else {
+        return <span className="likes-num">{this.state.likes_num} <label>likes</label></span>
+      }
+    }
     displayPhotosDropdown = () => {
       if(this.state.username == this.props.logged) {
         return (   
@@ -206,13 +223,21 @@ class Post extends Component {
                       :
                       <button onClick={this.handleLike} className="button is-danger is-outlined is-small">Like</button>
                       }
+                      {this.state.likes_num > 0 && <span className="likes-num">{this.state.likes_num} <label>likes</label></span>}
                     <time className="content-time">{this.state.time}</time></div>
                     <div className="content-body"  ref={(desc) => this.desc = desc}>
                     {
                       this.state.edit ? (
                         <div>
-                          <textarea class='textarea' rows='1' onChange={this.handleEditChange}>{this.state.description}</textarea><br/>
-                          <button class='button is-primary is-small' onClick={this.handleSave}>Save</button><br/>
+                          <textarea class='textarea' rows='1' onChange={this.handleEditChange}>{this.state.description}</textarea>
+                          <div class="field is-grouped">
+                            <p class="control">
+                              <button class='button is-primary is-small' onClick={this.handleSave}>Save</button>
+                            </p>
+                            <p class="control">
+                              <button class='button is-primary is-small' onClick={() => this.setState({edit: false})}>Cancel</button>
+                              </p>
+                          </div>
                       </div>
                       ) : 
                       (this.state.description)
