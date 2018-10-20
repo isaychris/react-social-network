@@ -47,9 +47,13 @@ class Post extends Component {
             return like + 1;
           });
           this.setState({liked: true, likes_num: this.state.likes_num + 1})
+
+          app.database().ref(`/profile/${this.props.logged}/liked`).push({post: this.state.post_id})
         }).catch(error => {
             console.log(error)
         })
+
+
       } else {
         app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.props.logged).once("value", (snapshot) => {
           if(snapshot.val()) {
@@ -60,6 +64,17 @@ class Post extends Component {
                         return like - 1;
                       });
                       this.setState({liked: false, likes_num: this.state.likes_num - 1})
+
+                      app.database().ref(`/profile/${this.props.logged}/liked`).orderByChild('post').equalTo(this.state.post_id).once("value", (snapshot) => {
+                        if(snapshot.val()) {
+                          snapshot.forEach((snap) => {
+                            if(snap.val().post == this.state.post_id) {
+                              snap.ref.remove()
+                              return
+                            }
+                          })
+                      }
+                    })
                       return
                   }
                 })
@@ -230,7 +245,7 @@ class Post extends Component {
                       this.state.edit ? (
                         <div>
                           <textarea class='textarea' rows='1' onChange={this.handleEditChange}>{this.state.description}</textarea>
-                          <div class="field is-grouped">
+                          <div class="field is-grouped edit-buttons">
                             <p class="control">
                               <button class='button is-primary is-small' onClick={this.handleSave}>Save</button>
                             </p>

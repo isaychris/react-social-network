@@ -33,6 +33,15 @@
   margin-right: 10px;
 }
 
+.content-body textarea {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.content-body .edit-buttons {
+  margin-bottom: 15px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

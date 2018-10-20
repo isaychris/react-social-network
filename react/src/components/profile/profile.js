@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Photos from './photos'
+import Likes from './likes'
+
 import {app} from "../../config/firebase_config"
 import { Redirect } from 'react-router-dom'
 
@@ -8,6 +10,7 @@ class Profile extends Component {
         super(props);
 
         this.state = {
+            mode: "posts",
             profile_pic: undefined,
             username: props.match.params.username,
             description: undefined,
@@ -16,10 +19,22 @@ class Profile extends Component {
             following_num: 0,
             follow: false,
             photos: [],
+            liked: [],
             redirect: false,
         }
     }
 
+    handleTab = (e) => {
+        if(this.state.mode == "posts") {
+            this.tab_posts.classList.remove("is-active")
+            this.tab_likes.classList.add("is-active")
+            this.setState({mode: "likes"})
+        } else if(this.state.mode == "likes") {
+            this.tab_likes.classList.remove("is-active")
+            this.tab_posts.classList.add("is-active")
+            this.setState({mode: "posts"})
+        }
+    }
     handleFollow = () => {
         if(!this.props.logged) {
             alert("You must be logged in to do that.")
@@ -87,24 +102,25 @@ class Profile extends Component {
                     val.id = key
                     this.setState({photos: [...this.state.photos, val]})
                 });
-                this.setState({posts: this.state.photos.length})
+                this.setState({posts_num: this.state.photos.length})
             }
         });
     }
 
-    addPhotos = () => {
-        let postsref = app.database().ref(`/posts`);
-        postsref.orderByChild('username').equalTo(this.state.username).once("value", (snapshot) => {
+    addLikes = () => {
+        app.database().ref(`/profile/${this.state.username}/liked`).once("value", (snapshot) => {
             if(snapshot.val()) {
-                this.setState({posts_num: snapshot.numChildren()})
-                Object.entries(snapshot.val()).forEach(([key, val]) => {
-                    val.id = key
-                    this.setState({photos: [...this.state.photos, val]})
-                });
-                this.setState({posts: this.state.photos.length})
+                console.log("ITS WORKING")
+                snapshot.forEach(snap => {
+                    app.database().ref(`/posts/${snap.val().post}`).once("value", (snaps) => {
+                        let value = {id: snap.val().post, image: snaps.val().image}
+                        this.setState({liked: [...this.state.liked, value]})
+                    })
+                })
             }
         });
     }
+
     componentWillMount = () => {
         let accountsref = app.database().ref(`/profile/${this.state.username}`);
         accountsref.once("value", (snapshot) => {
@@ -115,6 +131,7 @@ class Profile extends Component {
                     following_num: snapshot.val().following_num
                 })
                 this.addPhotos();
+                this.addLikes();
             } else {
                 this.setState({redirect: true})
             }
@@ -169,11 +186,11 @@ class Profile extends Component {
                 <div className="card-content">
                     <div className="tabs is-centered">
                         <ul>
-                        <li className="is-active"><a>Posts</a></li>
-                        <li><a>Liked</a></li>
+                        <li ref={(tab) => this.tab_posts = tab} className="tab-posts is-active" onClick={this.handleTab}><a>Posts</a></li>
+                        <li ref={(tab) => this.tab_likes = tab} className="tab-likes" onClick={this.handleTab}><a>Liked</a></li>
                         </ul>
                     </div>
-                    <Photos data={this.state.photos}/>
+                    {this.state.mode == "posts" ? <Photos data={this.state.photos}/> : <Likes data={this.state.liked}/> }
                     </div>
                 </div>
             </div>
