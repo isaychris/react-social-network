@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import {app} from "../../config/firebase_config"
-import firebase from "firebase"
-import shortid from 'shortid'
+import { app } from "../../config/firebase_config"
 import { Redirect } from 'react-router-dom'
-import { throws } from 'assert';
 
+// component for the settings page
 class Settings extends Component {
     constructor(props) {
         super(props)
+
         this.state = {
             profile_pic: undefined,
             bio: undefined,
@@ -16,57 +15,50 @@ class Settings extends Component {
             progress: false
         }
     }
-    handleUploadChange = (e) => {
-        if(e.target.files) {
-            let type = e.target.files[0].type
-            let name = e.target.files[0].name   
 
-            if (type.includes("image")) {
-                this.setState({file: e.target.files[0]})
 
-                var reader = new FileReader();
-                
-                reader.onload = (e) => {
-                    this.setState({pic_changed: true})
-                    this.setState({profile_pic: e.target.result})
-                    document.querySelector(".file-name").innerText = name
-                };
-                reader.readAsDataURL(e.target.files[0]);
-            } else {
-                alert("File must be a picture. Try again")
-            }
-        }
-    }
-
-    handleBioChange= (e) => {
-        this.setState({bio: e.target.value});
-    }
-
-    handleBio= (e) => {
-        app.database().ref(`/profile/${this.props.logged}/description`).set(this.state.bio).then(() => {
-            alert("Bio was changed!")
+    
+    // Called immediately before mounting occurs, and before Component#render
+    componentWillMount = () => {
+        // retrieve logged users current profile picture
+        app.storage().ref(`profile/${this.props.logged}`).child("profile").getDownloadURL().then((url) => {
+            this.setState({profile_pic: url})
         }).catch((error) => {
-            alert(error)
+            this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
+        })
+
+        // retrieve their bio
+        app.database().ref(`/profile/${this.props.logged}`).once("value", (snapshot) => {
+            if(snapshot.val()) {
+                this.setState({bio: snapshot.val().description})
+            }
         })
     }
 
+
+
+    // handles file upload submission
     handleUpload = (e) => {
         if(this.state.file) {
-            let image = this.state.file
+            let upload_task = app.storage().ref(`/profile/${this.props.logged}/profile`).put(this.state.file)
 
-
+            // set progress to true to make progress bar appear
             this.setState({progress: true})
 
-            let upload_task = app.storage().ref(`/profile/${this.props.logged}/profile`).put(image)
+            // listener for upload progress
             upload_task.on('state_changed', (snapshot) => {
+                // update progress value through reference
                 this.progress.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             },(error) => {
                 console.log(error)
             }, () => {
+
+                // update profile picture
                 app.storage().ref(`profile/${this.props.logged}`).child("profile").getDownloadURL().then((url) => {
                     this.setState({profile_pic: url})
-                    alert("Profile picture changed!")
+                    // hide process since its done
                     this.setState({progress: false})
+                    alert("Profile picture changed!")
                 })
             })
         } else {
@@ -74,17 +66,44 @@ class Settings extends Component {
         }
     }
 
-    componentWillMount = () => {
-        app.storage().ref(`profile/${this.props.logged}`).child("profile").getDownloadURL().then((url) => {
-            this.setState({profile_pic: url})
-        }).catch((error) => {
-            this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
-        })
+    // handles file upload selection
+    handleUploadChange = (e) => {
+        // if a file was selected
+        if(e.target.files) {
+            let type = e.target.files[0].type
 
-        app.database().ref(`/profile/${this.props.logged}`).once("value", (snapshot) => {
-            if(snapshot.val()) {
-                this.setState({bio: snapshot.val().description})
+            // only accept files that are images
+            if (type.includes("image")) {
+                this.setState({file: e.target.files[0]})
+
+                var reader = new FileReader();
+
+                // once loaded, change profile pic 
+                reader.onload = (e) => {
+                    this.setState({pic_changed: true})
+                    this.setState({profile_pic: e.target.result})
+
+                    document.querySelector(".file-name").innerText = e.target.files[0].name
+                };
+                reader.readAsDataURL(e.target.files[0]);
+
+            } else {
+                alert("File must be a picture. Try again")
             }
+        }
+    }
+    
+    // handles any changes to the bio
+    handleBioChange= (e) => {
+        this.setState({bio: e.target.value});
+    }
+
+    // handles the saving of the bio
+    handleBioSave = (e) => {
+        app.database().ref(`/profile/${this.props.logged}/description`).set(this.state.bio).then(() => {
+            alert("Bio was changed!")
+        }).catch((error) => {
+            alert(error)
         })
     }
 
@@ -137,7 +156,7 @@ class Settings extends Component {
                     <hr/><br/>
                     <label className='label'>Biography: </label>
                     <textarea id="description" className="textarea" placeholder="Enter bio" value={this.state.bio} onChange={this.handleBioChange}></textarea><br/>
-                    <button className="button is-primary" onClick={this.handleBio}>Save Bio</button>   
+                    <button className="button is-primary" onClick={this.handleBioSave}>Save Bio</button>   
                 </div>
                 </div>
                 </div>

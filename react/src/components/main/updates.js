@@ -1,12 +1,12 @@
 import React from 'react';
-import * as moment from 'moment'
 import { Link } from 'react-router-dom'
+import * as moment from 'moment'
 
+// functional component for sidebar component in main page
 const Updates = (props) => {
-
+    // create Update elements from data passed as props
     const updateslist = props.data.map((obj, index) => {
-        let last_update = obj.last_update != undefined ? moment(obj.last_update).fromNow()
-        : "never"
+        let last_update = obj.last_update != undefined ? moment(obj.last_update).fromNow() : "never"
 
         return (<tr key={index}>
             <td>
@@ -22,6 +22,8 @@ const Updates = (props) => {
             <td>{last_update}</td>
         </tr>)
     })
+
+
 
     return(
         <div className="updates">

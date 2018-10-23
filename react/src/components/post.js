@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import Comments from './comments'
-import {app} from "../config/firebase_config"
+import {app } from "../config/firebase_config"
 import { Redirect, Link } from 'react-router-dom'
+import Comments from './comments'
 
+// component to display a photo post
 class Post extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
             username: undefined,
             profile_pic: undefined,
@@ -21,153 +23,191 @@ class Post extends Component {
         }
     }
 
+
+    // Called immediately after a component is mounted. Setting state here will trigger re-rendering.
+    componentDidMount = () => {
+        // retrieve post data for post id
+        app.database().ref(`/posts/${this.state.post_id}`).once('value', (snapshot) => {
+            // if it exists, update states for post
+            if(snapshot.val()) {
+                this.updatePost(snapshot);
+            // if not redirect to error page
+            } else {
+                this.props.updateRedirect(true, "error")
+            }
+        }).then(() => {
+            // retrieve posters profile pic, if not exist use default image
+            app.storage().ref(`profile/${this.state.username}`).child("profile").getDownloadURL().then((url) => {
+                this.setState({profile_pic: url})
+            }).catch((error) => {
+                this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
+            })
+        })
+
+        // check if logged user had liked the image
+        app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.props.logged).once("value", (snapshot) => {
+            // if they did, set liked state to true, which will toggle the like button
+            if(snapshot.val()) {
+            this.setState({liked: true})
+            } 
+        });
+
+      // retrieve the comments for the post
+        let commentsref = app.database().ref(`/comments/${this.state.post_id}`);
+        commentsref.once("value", (snapshot) => {
+            if(snapshot.val()) {
+                Object.entries(snapshot.val()).forEach(([key, val]) => {
+                    this.setState({comments: [...this.state.comments, val]})
+                });
+            } 
+        });
+    }
+
+
+
+    // updates post states from database if it exists
     updatePost = (snapshot) => {
         this.setState({
-          username: snapshot.val().username,
-          description: snapshot.val().description,
-          time: new Date(snapshot.val().time).toDateString(),
-          image: snapshot.val().image,
-          likes_num: snapshot.val().like_num
+            username: snapshot.val().username,
+            description: snapshot.val().description,
+            time: new Date(snapshot.val().time).toDateString(),
+            image: snapshot.val().image,
+            likes_num: snapshot.val().like_num
         })
     }
 
+
+
+    // handles click event for like/unlike button
     handleLike = () => {
-      if(!this.props.logged) {
-        alert("You must be logged in to do that.")
-        return
-      }
+        // only authenticated useres can like a photo
+        if(!this.props.logged) {
+            alert("You must be logged in to do that.")
+            return
+        }
 
-      if(!this.state.liked) {
-        let likeref = app.database().ref(`/posts/${this.state.post_id}/liked`)
+      // if button click, and state is not initailly liked,
+        if(!this.state.liked) {
+            let likeref = app.database().ref(`/posts/${this.state.post_id}/liked`)
         
-        likeref.push({
-          username: this.props.logged
+            // like the post by setting a like variable with the logged users name as value in database.
+            likeref.push({
+            username: this.props.logged
         }).then((snap) => {
-          app.database().ref(`/posts/${this.state.post_id}/like_num`).transaction((like) => {
-            return like + 1;
-          });
-          this.setState({liked: true, likes_num: this.state.likes_num + 1})
+            // increment the posts like num
+            app.database().ref(`/posts/${this.state.post_id}/like_num`).transaction((like) => {
+                return like + 1;
+            });
 
-          app.database().ref(`/profile/${this.props.logged}/liked`).push({post: this.state.post_id})
+            // set the posts like state to true
+            this.setState({liked: true, likes_num: this.state.likes_num + 1})
+            // add a reference to the liked image to the logged users profile account
+            app.database().ref(`/profile/${this.props.logged}/liked`).push({post: this.state.post_id})
         }).catch(error => {
             console.log(error)
         })
 
+        // if button click, and state is  initailly liked
+        } else {
+            app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.props.logged).once("value", (snapshot) => {
+                if(snapshot.val()) {
+                    snapshot.forEach((snap) => {
+                        if(snap.val().username === this.state.username) {
+                            snap.ref.remove()
+                            app.database().ref(`/posts/${this.state.post_id}/like_num`).transaction((like) => {
+                                return like - 1;
+                            });
+                            this.setState({liked: false, likes_num: this.state.likes_num - 1})
 
-      } else {
-        app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.props.logged).once("value", (snapshot) => {
-          if(snapshot.val()) {
-              snapshot.forEach((snap) => {
-                  if(snap.val().username === this.state.username) {
-                      snap.ref.remove()
-                      app.database().ref(`/posts/${this.state.post_id}/like_num`).transaction((like) => {
-                        return like - 1;
-                      });
-                      this.setState({liked: false, likes_num: this.state.likes_num - 1})
-
-                      app.database().ref(`/profile/${this.props.logged}/liked`).orderByChild('post').equalTo(this.state.post_id).once("value", (snapshot) => {
-                        if(snapshot.val()) {
-                          snapshot.forEach((snap) => {
-                            if(snap.val().post == this.state.post_id) {
-                              snap.ref.remove()
-                              return
-                            }
-                          })
-                      }
+                            app.database().ref(`/profile/${this.props.logged}/liked`).orderByChild('post').equalTo(this.state.post_id).once("value", (snapshot) => {
+                                if(snapshot.val()) {
+                                    snapshot.forEach((snap) => {
+                                        if(snap.val().post == this.state.post_id) {
+                                            snap.ref.remove()
+                                            return
+                                        }
+                                    })
+                                }
+                            })
+                            return
+                        }
                     })
-                      return
-                  }
-                })
-              }
+                }
             })
-          }
-  }
+        }
+    }
 
+
+
+    // handles the deletion of a post
     handleDelete = () => {
-      let input = window.confirm("Are you sure you want to delete this photo?")
+        let input = window.confirm("Are you sure you want to delete this photo?")
 
-      if(input) {
-        app.database().ref(`/posts`).child(this.state.post_id).remove().then(() => {
-          alert("Photo deleted!")
-          this.setState({render: false})
-        })
-      }
+        if(input) {
+            app.database().ref(`/posts`).child(this.state.post_id).remove().then(() => {
+            alert("Photo deleted!")
+            this.setState({render: false})
+            })
+        }
 
-      if(this.props.updateRedirect) {
-        this.props.updateRedirect(true, "profile")
-      }
+        if(this.props.updateRedirect) {
+            this.props.updateRedirect(true, "profile")
+        }
     }
 
+
+
+    // handles the edit save of a post
     handleSave = () => {
-      app.database().ref(`/posts/${this.state.post_id}/description`).set(this.state.description).then(() => {
-        this.setState({edit: false})
-        alert("saved")
-      }).catch((error) => {
-        alert(error)
-      })
+        app.database().ref(`/posts/${this.state.post_id}/description`).set(this.state.description).then(() => {
+            this.setState({edit: false})
+            alert("saved")
+        }).catch((error) => {
+            alert(error)
+        })
     }
 
+
+
+    // handle the click event on edit button
     handleEdit = () => {
-      this.setState({edit: true})
+        this.setState({edit: true})
     }
 
+
+
+    // handles whatever description change
     handleEditChange = (e) => {
-      this.setState({description: e.target.value})
+        this.setState({description: e.target.value})
     }
 
+
+
+    // handles the submssion of a comment
     handleSubmit = (e) => {
         e.preventDefault();
 
         if(!this.props.logged) {
-          alert("You must be logged in to do that.")
-          return
+            alert("You must be logged in to do that.")
+            return
         }
         
         app.database().ref(`/comments`).child(this.state.post_id).push({
-          username: this.props.logged,
-          comment: this.input.value
-      }).then((snap) => {
-          console.log(snap)
-          let new_comment = {username: this.props.logged, comment: this.input.value}
-          this.setState({comments: [...this.state.comments, new_comment]})
+            username: this.props.logged,
+            comment: this.input.value
+        }).then((snap) => {
+            let new_comment = {username: this.props.logged, comment: this.input.value}
+            this.setState({comments: [...this.state.comments, new_comment]})
 
-          this.input.value = ""
-      }).catch((error => {
-          console.log(error)
-      }))
-    }
-
-    componentDidMount = () => {
-      app.database().ref(`/posts/${this.state.post_id}`).once('value', (snapshot) => {
-          if(snapshot.val()) {
-            this.updatePost(snapshot);
-          } else {
-              this.props.updateRedirect(true, "error")
-          }
-      }).then(() => {
-        app.storage().ref(`profile/${this.state.username}`).child("profile").getDownloadURL().then((url) => {
-          this.setState({profile_pic: url})
-        }).catch((error) => {
-            this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
+            this.input.value = ""
+        }).catch(error => {
+            console.log(error)
         })
-      })
-
-      app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.props.logged).once("value", (snapshot) => {
-        if(snapshot.val()) {
-          this.setState({liked: true})
-        } 
-      });
-
-      let commentsref = app.database().ref(`/comments/${this.state.post_id}`);
-      commentsref.once("value", (snapshot) => {
-          if(snapshot.val()) {
-            Object.entries(snapshot.val()).forEach(([key, val]) => {
-              this.setState({comments: [...this.state.comments, val]})
-          });
-          } 
-      });
     }
 
+
+
+    // determines noun form of likes
     displayLikesNum = () => {
       if(this.state.likes_num == 1) {
         return <span className="likes-num">{this.state.likes_num} <label>like</label></span>
@@ -175,7 +215,12 @@ class Post extends Component {
         return <span className="likes-num">{this.state.likes_num} <label>likes</label></span>
       }
     }
+
+
+
+    // determines weather or not to display the edit/delete dropdown.
     displayPhotosDropdown = () => {
+      // display only if the user owns the image
       if(this.state.username == this.props.logged) {
         return (   
           <div className="dropdown is-hoverable is-right is-small photo-dropdown">
@@ -203,6 +248,9 @@ class Post extends Component {
         return null
       }
     }
+
+
+
     render() {
       if(this.state.redirect) {
         return <Redirect to="/error"/>

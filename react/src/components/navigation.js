@@ -1,19 +1,26 @@
 import React from 'react';
 import { Link } from 'react-router-dom'
 import {app} from "../config/firebase_config"
+import logo from '../logo.svg';
+import brand from '../brand.png';
 
+// functional component which serves as the navigation bar
 const Navigation = (props) => {
     function handleClick() {
         app.auth().signOut().then(() => {
             props.updateAuthLogged(false, null, null)
-          }, function(error) {
+        }, function(error) {
             alert('Sign Out Error', error);
-          });
+        });
     }
 
+
+
+    // determines which buttons should be displayed based off weather or not user is logged in
     function buttonsDisplay(logged) {
         let profile_link = "/u/" + props.logged
 
+        // if not logged in, show sign up and login buttons
         if(!logged) {
             return (
                 <div>
@@ -21,6 +28,7 @@ const Navigation = (props) => {
                     <Link to="/login" className="button is-light">Log in</Link>
                 </div>
             )
+        // if logged in, show upload, signout, and dropdown button which houses profile and settings link
         } else {
             return (
                 <div>
@@ -50,6 +58,8 @@ const Navigation = (props) => {
             )
         }
     }
+
+
 
     return (
         <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation">

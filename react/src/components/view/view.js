@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Post from '../post'
 import { Redirect, Link } from 'react-router-dom'
 
+// container component for viewing a single picture
 class View extends Component {
     constructor(props) {
         super(props);
@@ -12,9 +13,15 @@ class View extends Component {
         }
     }
 
+    // handles the redirection, passed as a callback to Post component
+    // Two redirections:
+    // 1) to the photo
+    // 2) to error page, if photo doesnt exist
     updateRedirect = (bool, location) => {
         this.setState({redirect: bool, redirect_loc: location})
     }
+
+
 
     render() {
         if (this.state.redirect && this.state.redirect_loc == "error") {

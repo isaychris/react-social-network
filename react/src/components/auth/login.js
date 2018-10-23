@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import {app} from "../../config/firebase_config"
+import { app } from "../../config/firebase_config"
 import { Redirect } from 'react-router-dom'
 
+// component for the login page
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -10,15 +11,21 @@ class Login extends Component {
         }
     }
 
+
+
+    // handles login submission
     handleSubmit = (e) => {
         e.preventDefault();
-
+        // sign in using fire base authentication service
         app.auth().signInWithEmailAndPassword(this.email.value, this.pass.value).then((obj)=> {
+            // update auth states in root component
             this.props.updateAuthLogged(true, obj.user.displayName, obj.user.uid)
         }).catch((error) => {
             alert(error.message)
         })
     }
+
+
 
     render() {
         if(this.state.redirect) {

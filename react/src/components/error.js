@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'
 
+// functional component for the errors page
 const Error = () => {
     return(
         <div className="error">
