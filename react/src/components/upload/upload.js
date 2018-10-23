@@ -52,11 +52,12 @@ class Upload extends Component {
         if(this.state.file) {
             let image = this.state.file
             let extension = image.type.split('/')[1]
-            let new_name = uuid + '.' + extension
-            let upload_task = app.storage().ref(`/images/${this.props.logged}/${new_name}`).put(image)
 
             // generate a unique identifier for photo
             let uuid = shortid.generate()
+
+            let new_name = uuid + '.' + extension
+            let upload_task = app.storage().ref(`/images/${this.props.logged}/${new_name}`).put(image)
 
             // set progress to true to make progress bar appear
             this.setState({progress: true})
