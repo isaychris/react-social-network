@@ -2,7 +2,7 @@
 A photosharing social network powered by ReactJS, Express and Firebase Storage / Authentication / Real-Time Database
 
 ### Video Preview:
-[![Image](https://i.imgur.com/tRuPxiN.png)](https://streamable.com/uyrrw)
+[![Image](https://i.imgur.com/OuQBnGb.png)](https://streamable.com/nih56)
 
 
 ### Working:

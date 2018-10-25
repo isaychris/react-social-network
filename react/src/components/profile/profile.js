@@ -95,9 +95,10 @@ class Profile extends Component {
                 // for each photo object, append to photos array state
                 snapshot.forEach(snap => {
                     app.database().ref(`/posts/${snap.val().post}`).once("value", (snaps) => {
-                        let value = {id: snap.val().post, image: snaps.val().image}
-
-                        this.setState({liked: [...this.state.liked, value]})
+                        if(snaps.val()) {
+                            let value = {id: snap.val().post, image: snaps.val().image}
+                            this.setState({liked: [...this.state.liked, value]})
+                        }
                     })
                 })
             }

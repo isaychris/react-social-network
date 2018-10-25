@@ -74,6 +74,7 @@ class Settings extends Component {
 
             // only accept files that are images
             if (type.includes("image")) {
+                let name = e.target.files[0].name
                 this.setState({file: e.target.files[0]})
 
                 var reader = new FileReader();
@@ -83,7 +84,7 @@ class Settings extends Component {
                     this.setState({pic_changed: true})
                     this.setState({profile_pic: e.target.result})
 
-                    document.querySelector(".file-name").innerText = e.target.files[0].name
+                    document.querySelector(".file-name").innerText = name
                 };
                 reader.readAsDataURL(e.target.files[0]);
 

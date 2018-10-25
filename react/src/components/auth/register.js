@@ -36,7 +36,9 @@ class Register extends Component {
                 app.auth().createUserWithEmailAndPassword(this.email.value, this.pass.value).then((obj)=> {
                     app.database().ref('/profile').child(user).set({
                         uid: obj.user.uid,
-                        description: "No description"
+                        description: "No description",
+                        followers_num: 0,
+                        following_num: 0
                     }).then(() => {
                         // update display name in firebase auth user object
                         obj.user.updateProfile({
@@ -48,7 +50,7 @@ class Register extends Component {
                     })
                     // create the user profile
                     app.database().ref(`/profile/${user}/following`).push({
-                        username: user
+                        username: user,
                     })
                 }).catch((error) => {
                     alert(error.message)
