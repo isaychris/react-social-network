@@ -1,6 +1,10 @@
 # react-social-network
 A photosharing social network powered by ReactJS, Express and Firebase Storage / Authentication / Real-Time Database
 
+### Website (WIP):
+https://seiya-buzz.herokuapp.com/
+
+
 ### Video Preview:
 [![Image](https://i.imgur.com/OuQBnGb.png)](https://streamable.com/nih56)
 
@@ -29,10 +33,10 @@ A photosharing social network powered by ReactJS, Express and Firebase Storage /
 * Database with Firebase Real-Time Database
 
 ### TO-DO:
-* Sorting by time
+* Sort images by time
 * Search functionality
+* Image compression
 * Account management
-* Set up redux if needed ...
 
 ### Setup:
 run express backend in seperate terminal
@@ -43,7 +47,7 @@ set PORT=3001 && node server.js
 
 run react development server
 ```
-cd react
+cd client
 npm start
 ```
 
