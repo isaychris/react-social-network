@@ -28,7 +28,7 @@ class App extends Component {
 
     // Called immediately before mounting occurs, and before Component#render
     componentWillMount = () => {
-        fetch('/test')
+        fetch('/api/test')
         .then(res => res.json())
         .then(test => console.log(test))
         .catch(() => console.log("Express backend not working"))

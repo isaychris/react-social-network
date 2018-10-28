@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "heroku-postbuild": "cd react && npm install && npm run build"
+    "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "dependencies": {
     "cookie-parser": "~1.4.3",
