@@ -22,11 +22,17 @@ class App extends Component {
             authenticated: false,
             loading: true,
             selected: false,
+            test: undefined
         }
     }
 
     // Called immediately before mounting occurs, and before Component#render
     componentWillMount = () => {
+        fetch('/test')
+        .then(res => res.json())
+        .then(test => console.log(test))
+        .catch(() => console.log("Express backend not working"))
+
         // check if authentication changed
         app.auth().onAuthStateChanged(authUser => {
             if(authUser) {
