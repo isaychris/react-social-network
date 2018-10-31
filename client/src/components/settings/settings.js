@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { app } from "../../config/firebase_config"
 import { Redirect } from 'react-router-dom'
+import ContextUser from '../../contextUser'
 
 // component for the settings page
 class Settings extends Component {
+    static contextType = ContextUser;
+
     constructor(props) {
         super(props)
 
@@ -21,14 +24,14 @@ class Settings extends Component {
     // Called immediately before mounting occurs, and before Component#render
     componentWillMount = () => {
         // retrieve logged users current profile picture
-        app.storage().ref(`profile/${this.props.logged}`).child("profile").getDownloadURL().then((url) => {
+        app.storage().ref(`profile/${this.context.state.logged}`).child("profile").getDownloadURL().then((url) => {
             this.setState({profile_pic: url})
         }).catch((error) => {
             this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
         })
 
         // retrieve their bio
-        app.database().ref(`/profile/${this.props.logged}`).once("value", (snapshot) => {
+        app.database().ref(`/profile/${this.context.state.logged}`).once("value", (snapshot) => {
             if(snapshot.val()) {
                 this.setState({bio: snapshot.val().description})
             }
@@ -40,7 +43,7 @@ class Settings extends Component {
     // handles file upload submission
     handleUpload = (e) => {
         if(this.state.file) {
-            let upload_task = app.storage().ref(`/profile/${this.props.logged}/profile`).put(this.state.file)
+            let upload_task = app.storage().ref(`/profile/${this.context.state.logged}/profile`).put(this.state.file)
 
             // set progress to true to make progress bar appear
             this.setState({progress: true})
@@ -54,7 +57,7 @@ class Settings extends Component {
             }, () => {
 
                 // update profile picture
-                app.storage().ref(`profile/${this.props.logged}`).child("profile").getDownloadURL().then((url) => {
+                app.storage().ref(`profile/${this.context.state.logged}`).child("profile").getDownloadURL().then((url) => {
                     this.setState({profile_pic: url})
                     // hide process since its done
                     this.setState({progress: false})
@@ -101,7 +104,7 @@ class Settings extends Component {
 
     // handles the saving of the bio
     handleBioSave = (e) => {
-        app.database().ref(`/profile/${this.props.logged}/description`).set(this.state.bio).then(() => {
+        app.database().ref(`/profile/${this.context.state.logged}/description`).set(this.state.bio).then(() => {
             alert("Bio was changed!")
         }).catch((error) => {
             alert(error)

@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { app } from "../../config/firebase_config"
 import { Redirect } from 'react-router-dom'
+import ContextUser from '../../contextUser'
 
 class Register extends Component {
+    static contextType = ContextUser;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -13,10 +16,10 @@ class Register extends Component {
     }
 
 
-
+    
     // updates logged state in root component
     updateLogged = (user) => {
-        this.props.updateLogged(user);
+        this.context.actions.updateLogged(user);
         this.setState({redirect: true})                     
     }
 
@@ -91,5 +94,7 @@ class Register extends Component {
         }
     }
 }
+
+Register.contextType = ContextUser;
 
 export default Register;

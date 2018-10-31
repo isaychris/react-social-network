@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { app } from "../../config/firebase_config"
 import { Redirect } from 'react-router-dom'
+import ContextUser from '../../contextUser'
 
 // component for the login page
 class Login extends Component {
+    static contextType = ContextUser;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -19,7 +22,7 @@ class Login extends Component {
         // sign in using fire base authentication service
         app.auth().signInWithEmailAndPassword(this.email.value, this.pass.value).then((obj)=> {
             // update auth states in root component
-            this.props.updateAuthLogged(true, obj.user.displayName, obj.user.uid)
+            this.context.actions.updateAuthLogged(true, obj.user.displayName, obj.user.uid)
         }).catch((error) => {
             alert(error.message)
         })
@@ -54,5 +57,7 @@ class Login extends Component {
         }
     }
 }
+
+Login.contextType = ContextUser;
 
 export default Login;

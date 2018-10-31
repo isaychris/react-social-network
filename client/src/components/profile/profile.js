@@ -3,9 +3,12 @@ import { app } from "../../config/firebase_config"
 import { Redirect } from 'react-router-dom'
 import Photos from './photos'
 import Likes from './likes'
+import ContextUser from '../../contextUser'
 
 //component for the profile page
 class Profile extends Component {
+    static contextType = ContextUser;
+
     constructor(props) {
         super(props);
 
@@ -47,7 +50,7 @@ class Profile extends Component {
         });
 
         // check if you are following this profile, if so.. toggle follow state
-        app.database().ref(`/profile/${this.props.logged}/following`).orderByChild('username').equalTo(this.state.username).once("value", (snapshot) => {
+        app.database().ref(`/profile/${this.context.state.logged}/following`).orderByChild('username').equalTo(this.state.username).once("value", (snapshot) => {
             if(snapshot.val()) {
                 this.setState({follow: true})
             }
@@ -127,7 +130,7 @@ class Profile extends Component {
     // handles the click event on the follow button, toggles between follow / unfollow
     handleFollow = () => {
         // user must be logged in to follow/unfolow
-        if(!this.props.logged) {
+        if(!this.context.state.logged) {
             alert("You must be logged in to do that.")
             return
           }
@@ -135,11 +138,11 @@ class Profile extends Component {
         // if logged in user is not following the profile
         if(!this.state.follow) {
             // follow the profile user; add them to logged users following list 
-            app.database().ref(`/profile/${this.props.logged}/following`).push({
+            app.database().ref(`/profile/${this.context.state.logged}/following`).push({
                 username: this.state.username
             }).then(() => {
                 // then increment following num
-                app.database().ref(`/profile/${this.props.logged}/following_num`).transaction((value) => {
+                app.database().ref(`/profile/${this.context.state.logged}/following_num`).transaction((value) => {
                     return value + 1;
                   });
                 // and set follow to true
@@ -150,7 +153,7 @@ class Profile extends Component {
 
             // add logged user to profile users follwers list
             app.database().ref(`/profile/${this.state.username}/followers`).push({
-                username: this.props.logged
+                username: this.context.state.logged
             }).then(() => {
                 // then increment followers num.
                 app.database().ref(`/profile/${this.state.username}/followers_num`).transaction((value) => {
@@ -162,13 +165,13 @@ class Profile extends Component {
         // if logged in user is following the profile
         else {
             // unfollow the profile user;
-            app.database().ref(`/profile/${this.props.logged}/following`).orderByChild('username').equalTo(this.state.username).on("child_added", (snapshot) => {
+            app.database().ref(`/profile/${this.context.state.logged}/following`).orderByChild('username').equalTo(this.state.username).on("child_added", (snapshot) => {
                 if(snapshot.val()) {
                     // remove them from logged users following list
                     if(snapshot.val().username === this.state.username) {
                         snapshot.ref.remove()
                         // then decrement following num
-                        app.database().ref(`/profile/${this.props.logged}/following_num`).transaction((value) => {
+                        app.database().ref(`/profile/${this.context.state.logged}/following_num`).transaction((value) => {
                             return value - 1;
                           });
                         // and set following to false
@@ -180,9 +183,9 @@ class Profile extends Component {
             })
 
             //remove logged user from profile users follwers list
-            app.database().ref(`/profile/${this.state.username}/followers`).orderByChild('username').equalTo(this.props.logged).on("child_added", (snapshot) => {
+            app.database().ref(`/profile/${this.state.username}/followers`).orderByChild('username').equalTo(this.context.state.logged).on("child_added", (snapshot) => {
                 if(snapshot.val()) {
-                    if(snapshot.val().username === this.props.logged) {
+                    if(snapshot.val().username === this.context.state.logged) {
                         snapshot.ref.remove()
                         // then decrement followers num
                         app.database().ref(`/profile/${this.state.username}/followers_num`).transaction((value) => {
@@ -244,5 +247,8 @@ class Profile extends Component {
     }
 }
 }
+
+Profile.contextType = ContextUser;
+
 
 export default Profile;

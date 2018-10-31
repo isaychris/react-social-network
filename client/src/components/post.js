@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import {app } from "../config/firebase_config"
 import { Redirect, Link } from 'react-router-dom'
 import Comments from './comments'
-
+import ContextUser from '../contextUser'
 // component to display a photo post
 class Post extends Component {
+    static contextType = ContextUser;
+
     constructor(props) {
         super(props);
 
@@ -42,10 +44,10 @@ class Post extends Component {
             }).catch((error) => {
                 this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
             })
-        })
+    })
 
         // check if logged user had liked the image
-        app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.props.logged).once("value", (snapshot) => {
+        app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.context.state.logged).once("value", (snapshot) => {
             // if they did, set liked state to true, which will toggle the like button
             if(snapshot.val()) {
             this.setState({liked: true})
@@ -80,8 +82,9 @@ class Post extends Component {
 
     // handles click event for like/unlike button
     handleLike = () => {
+
         // only authenticated useres can like a photo
-        if(!this.props.logged) {
+        if(!this.context.state.logged) {
             alert("You must be logged in to do that.")
             return
         }
@@ -92,7 +95,7 @@ class Post extends Component {
         
             // like the post by setting a like variable with the logged users name as value in database.
             likeref.push({
-            username: this.props.logged
+            username: this.context.state.logged
         }).then((snap) => {
             // increment the posts like num
             app.database().ref(`/posts/${this.state.post_id}/like_num`).transaction((like) => {
@@ -102,14 +105,14 @@ class Post extends Component {
             // set the posts like state to true
             this.setState({liked: true, likes_num: this.state.likes_num + 1})
             // add a reference to the liked image to the logged users profile account
-            app.database().ref(`/profile/${this.props.logged}/liked`).push({post: this.state.post_id})
+            app.database().ref(`/profile/${this.context.state.logged}/liked`).push({post: this.state.post_id})
         }).catch(error => {
             console.log(error)
         })
 
         // if button click, and state is  initailly liked
         } else {
-            app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.props.logged).once("value", (snapshot) => {
+            app.database().ref(`/posts/${this.state.post_id}/liked`).orderByChild('username').equalTo(this.context.state.logged).once("value", (snapshot) => {
                 if(snapshot.val()) {
                     snapshot.forEach((snap) => {
                         if(snap.val().username === this.state.username) {
@@ -119,7 +122,7 @@ class Post extends Component {
                             });
                             this.setState({liked: false, likes_num: this.state.likes_num - 1})
 
-                            app.database().ref(`/profile/${this.props.logged}/liked`).orderByChild('post').equalTo(this.state.post_id).once("value", (snapshot) => {
+                            app.database().ref(`/profile/${this.context.state.logged}/liked`).orderByChild('post').equalTo(this.state.post_id).once("value", (snapshot) => {
                                 if(snapshot.val()) {
                                     snapshot.forEach((snap) => {
                                         if(snap.val().post == this.state.post_id) {
@@ -187,16 +190,16 @@ class Post extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
 
-        if(!this.props.logged) {
+        if(!this.context.state.logged) {
             alert("You must be logged in to do that.")
             return
         }
         
         app.database().ref(`/comments`).child(this.state.post_id).push({
-            username: this.props.logged,
+            username: this.context.state.logged,
             comment: this.input.value
         }).then((snap) => {
-            let new_comment = {username: this.props.logged, comment: this.input.value}
+            let new_comment = {username: this.context.state.logged, comment: this.input.value}
             this.setState({comments: [...this.state.comments, new_comment]})
 
             this.input.value = ""
@@ -221,7 +224,7 @@ class Post extends Component {
     // determines weather or not to display the edit/delete dropdown.
     displayPhotosDropdown = () => {
       // display only if the user owns the image
-      if(this.state.username == this.props.logged) {
+      if(this.state.username == this.context.state.logged) {
         return (   
           <div className="dropdown is-hoverable is-right is-small photo-dropdown">
           <div className="dropdown-trigger">
@@ -308,9 +311,9 @@ class Post extends Component {
                     
                     </div>
                       <hr/>
-                      {this.props.logged && <Comments data={this.state.comments}/>}
+                      {this.context.state.logged && <Comments data={this.state.comments}/>}
 
-                    <form onSubmit={this.handleSubmit} style={{display: this.props.logged ? 'block' : 'none' }}>
+                    <form onSubmit={this.handleSubmit} style={{display: this.context.state.logged ? 'block' : 'none' }}>
                       <div className="field has-addons">
                         <div className="control is-expanded">
                           <input ref={(input) => this.input = input} className="input" type="text" placeholder="Add a comment" />
@@ -334,5 +337,7 @@ class Post extends Component {
       }
     }
 }
+
+Post.contextType = ContextUser;
 
 export default Post;

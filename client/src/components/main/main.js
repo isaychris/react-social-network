@@ -2,9 +2,12 @@ import React, { Component } from 'react';
 import { app } from "../../config/firebase_config"
 import Sidebar from './sidebar'
 import Posts from './posts'
+import ContextUser from '../../contextUser'
 
 // component for the main page
 class Main extends Component {
+    static contextType = ContextUser;
+
     constructor(props) {
         super(props);
 
@@ -19,7 +22,7 @@ class Main extends Component {
     // Called immediately after a component is mounted. Setting state here will trigger re-rendering.
     componentDidMount = () => {
         // retrieve list of followed users
-        app.database().ref(`/profile/${this.props.logged}/following`).once("value", (snapshot) => {
+        app.database().ref(`/profile/${this.context.state.logged}/following`).once("value", (snapshot) => {
             if(snapshot.val()) {
                 snapshot.forEach((snap) => {
                     this.setState({following_list: [...this.state.following_list, snap.val().username]})
@@ -46,19 +49,22 @@ class Main extends Component {
 
     render() {
         const {following_list, post_list, loading} = this.state
+
         if(loading) {
             return <div>loading...</div>;
         } else {
             return(
                 <div className="main">
                     <div className="grid-container">
-                        <Sidebar following={following_list} logged={this.props.logged}/>
-                        <Posts data={post_list} logged={this.props.logged}/>
+                        <Sidebar following={following_list}/>
+                        <Posts data={post_list}/>
                     </div>            
                 </div>
             )
         }
     }
 }
+
+Main.contextType = ContextUser;
 
 export default Main;

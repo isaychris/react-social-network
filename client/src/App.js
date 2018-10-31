@@ -11,6 +11,8 @@ import View from './components/view/view'
 import Error from './components/error'
 import Settings from './components/settings/settings'
 import PrivateRoute from './components/auth/privateRoute'
+import ContextUser from './contextUser'
+
 import './App.css'
 
 class App extends Component {
@@ -21,8 +23,6 @@ class App extends Component {
             uid: null,
             authenticated: false,
             loading: true,
-            selected: false,
-            test: undefined
         }
     }
 
@@ -86,25 +86,28 @@ class App extends Component {
     }
 
     return(
-        <BrowserRouter>
-            <div className="App">
-                <Navigation auth={this.authenticated} logged={logged} updateAuthLogged={this.updateAuthLogged}/>
-                <Switch>
-                    <PrivateRoute exact path="/" component={Main} logged={logged} authenticated={authenticated}/>
-                    <PrivateRoute exact path="/upload" component={Upload} logged={logged} authenticated={authenticated}/>
-                    <PrivateRoute exact path="/settings" component={Settings} logged={logged} authenticated={authenticated}/>
+        <ContextUser.Provider value={{
+            state: { logged: logged, authenticated: authenticated, uid: uid },
+            actions: { updateLogged: this.updateLogged, updateAuth: this.updateAuth, updateAuthLogged: this.updateAuthLogged }
+        }}>
+            <BrowserRouter>
+                <div className="App">
+                    <Navigation/>
+                    <Switch>
+                        <PrivateRoute exact path="/" component={Main} authenticated={authenticated}/>
+                        <PrivateRoute exact path="/upload" component={Upload} authenticated={authenticated}/>
+                        <PrivateRoute exact path="/settings" component={Settings} authenticated={authenticated}/>
+                        
+                        <Route path="/login" render={()=> (authenticated ? <Redirect to="/"/> : <Login />)} exact/>
+                        <Route path="/register" render={()=> (authenticated ? <Redirect to="/"/> : <Register />)} exact/>
+                        <Route path="/u/:username" render={(props)=><Profile {...props} />} exact/>
+                        <Route path="/p/:id" render={(props)=><View {...props} />} exact/>
+                        <Route path="*" component={Error}/>
 
-                    <Route path="/login" render={()=>
-                        (authenticated ? <Redirect to="/"/> : <Login updateAuthLogged={this.updateAuthLogged} />)} exact/>
-                    <Route path="/register" render={()=>
-                        (authenticated ? <Redirect to="/"/> : <Register logged={logged} updateLogged={this.updateLogged}/>)} exact/>
-                    
-                    <Route path="/u/:username" render={(props)=><Profile logged={logged} uid={uid} {...props} />} exact/>
-                    <Route path="/p/:id" render={(props)=><View logged={logged} {...props} />} exact/>
-                    <Route path="*" component={Error}/>
-                </Switch>
-            </div>
-        </BrowserRouter>
+                    </Switch>
+                </div>
+            </BrowserRouter>
+        </ContextUser.Provider>
         )
     }
 }
