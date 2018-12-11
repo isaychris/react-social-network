@@ -1,6 +1,5 @@
 import React from 'react';
-import Post from '../post'
-import ContextUser from '../../contextUser'
+import Post from '../post/post'
 
 const Posts = (props) => {
     // create Post elements from data passed as props

@@ -21,24 +21,19 @@ class Sidebar extends Component {
         this.props.following.forEach((user) => {
             // find their profile information
             app.database().ref(`/profile/${user}`).once("value", (snapshot) => {
-                if(snapshot.val()) {    
-                    // get their profile pic, username, and last update
-                    app.storage().ref(`profile/${user}`).child("profile").getDownloadURL().then((url) => {
-                        let value = {
-                            profile_pic: url,
-                            username: snapshot.key,
-                            last_update: snapshot.val().last_update}
-                        // add that information to the list of updates
-                        this.setState({data: [...this.state.data, value]})
-                    }).catch((error) => {
-                        // if no profile pic, use the default pic
-                        let value = {
-                            profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media",
-                            username: snapshot.key,
-                            last_update: snapshot.val().last_update}
-                        // add that information to the list of updates
-                        this.setState({data: [...this.state.data, value]})
-                    })
+                if(snapshot.val()) {  
+                    let profile_pic = "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"
+                    
+                    if(snapshot.val().picture) {
+                        profile_pic = snapshot.val().picture
+                    }
+
+                    let value = {
+                        profile_pic: profile_pic,
+                        username: snapshot.key,
+                        last_update: snapshot.val().last_update}
+                    // add that information to the list of updates
+                    this.setState({data: [...this.state.data, value]})
                 }
             })
         })

@@ -28,19 +28,24 @@ class Profile extends Component {
     }
 
 
-
     // Called immediately before mounting occurs, and before Component#render
     componentWillMount = () => {
         // check if the username exists in database
         app.database().ref(`/profile/${this.state.username}`).once("value", (snapshot) => {
             if(snapshot.val()) {
+                let profile_pic = "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"
+                    
+                if(snapshot.val().picture) {
+                    profile_pic = snapshot.val().picture
+                }
+
                 // update profile state information
                 this.setState({
                     description: snapshot.val().description, 
                     followers_num: snapshot.val().followers_num,
-                    following_num: snapshot.val().following_num
+                    following_num: snapshot.val().following_num,
+                    profile_pic: profile_pic
                 })
-                this.updateProfilePic();
                 this.updatesPhotos();
                 this.updateLikedPhotos();
             } else {
@@ -56,18 +61,6 @@ class Profile extends Component {
             }
         })
     }
-
-
-
-    // retrieve users profile image from storage; if not exist use default.
-    updateProfilePic = () => {
-        app.storage().ref(`profile/${this.state.username}`).child("profile").getDownloadURL().then((url) => {
-            this.setState({profile_pic: url})
-        }).catch((error) => {
-            this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
-        })
-    }
-
 
 
     // retrieve users uploaded photos

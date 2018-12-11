@@ -33,6 +33,7 @@ const Updates = (props) => {
                 {props.data == 0 && (
                     <tr><td className="has-text-centered">There are no updates</td></tr>)
                 }
+
                 {updateslist}
                 </tbody>
             </table>

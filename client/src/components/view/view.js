@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Post from '../post'
+import Post from '../post/post'
 import { Redirect, Link } from 'react-router-dom'
 import ContextUser from '../../contextUser'
 

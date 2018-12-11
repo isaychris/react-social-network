@@ -14,8 +14,10 @@ https://seiya-buzz.herokuapp.com/
 * Uploading photos w/ description
 * Commenting
 * Liking photos
+* Photo Tags
 * Following users
 * Sharing link
+* Searching users
 * Profile page displays uploads / liked photos
 * Changing profile pic and bio
 * Editing photo description
@@ -33,10 +35,13 @@ https://seiya-buzz.herokuapp.com/
 * Database with Firebase Real-Time Database
 
 ### TO-DO:
-* Sort images by time
-* Search functionality
 * Image compression
-* Account management
+* Search photos by tags
+
+### Roadblocks:
+* Its difficult to make simple queries using Firebase. 
+* Unable to query substrings for searching users and photos.
+* Unable to sort photos by time
 
 ### Setup:
 run express backend in seperate terminal
@@ -52,9 +57,12 @@ npm start
 ```
 
 # Screenshots:
-![Image](https://i.imgur.com/b5gOnFZ.png)
+![Image](https://i.imgur.com/gwTJxFZ.png)
 ![Image](https://i.imgur.com/FSbuaPz.png)
 ![Image](https://i.imgur.com/Ub7WROS.png)
 ![Image](https://i.imgur.com/snUvPFp.png)
 ![Image](https://i.imgur.com/ByvHIGQ.png)
 ![Image](https://i.imgur.com/5ZjK7sv.png)
+![Image](https://i.imgur.com/5T1twCl.png)
+![Image](https://i.imgur.com/yeRffAA.png)
+![Image](https://i.imgur.com/fFBGDsr.png)

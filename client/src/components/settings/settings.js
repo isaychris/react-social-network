@@ -23,16 +23,14 @@ class Settings extends Component {
     
     // Called immediately before mounting occurs, and before Component#render
     componentWillMount = () => {
-        // retrieve logged users current profile picture
-        app.storage().ref(`profile/${this.context.state.logged}`).child("profile").getDownloadURL().then((url) => {
-            this.setState({profile_pic: url})
-        }).catch((error) => {
-            this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
-        })
-
-        // retrieve their bio
+        // retrieve their info
         app.database().ref(`/profile/${this.context.state.logged}`).once("value", (snapshot) => {
             if(snapshot.val()) {
+                if(snapshot.val().picture) {
+                    this.setState({profile_pic: snapshot.val().picture})
+                } else {
+                    this.setState({profile_pic: "https://firebasestorage.googleapis.com/v0/b/react-social-network-7e88b.appspot.com/o/assets%2Fdefault.png?alt=media"})
+                }
                 this.setState({bio: snapshot.val().description})
             }
         })
@@ -58,10 +56,12 @@ class Settings extends Component {
 
                 // update profile picture
                 app.storage().ref(`profile/${this.context.state.logged}`).child("profile").getDownloadURL().then((url) => {
-                    this.setState({profile_pic: url})
-                    // hide process since its done
-                    this.setState({progress: false})
-                    alert("Profile picture changed!")
+                    app.database().ref(`/profile/${this.context.state.logged}/picture`).set(url).then(()=>{
+                         // hide process since its done
+                        this.setState({profile_pic: url})
+                        this.setState({progress: false})
+                        alert("Profile picture changed!")
+                    })
                 })
             })
         } else {

@@ -4,6 +4,7 @@ import firebase from "firebase"
 import shortid from 'shortid'
 import { Redirect } from 'react-router-dom'
 import ContextUser from '../../contextUser'
+import { WithContext as ReactTags } from 'react-tag-input';
 
 // component for the upload page
 class Upload extends Component {
@@ -14,12 +15,33 @@ class Upload extends Component {
         this.state = {
             file: null,
             uuid: undefined,
+            tags: [],
             redirect: false,
             progress: false,
         }
     }
-    
 
+    handleDelete = (i) => {
+        const { tags } = this.state;
+        this.setState({
+         tags: tags.filter((tag, index) => index !== i),
+        });
+    }
+ 
+    handleAddition = (tag) => {
+        this.setState(state => ({ tags: [...state.tags, tag] }));
+    }
+ 
+    handleDrag = (tag, currPos, newPos) => {
+        const tags = [...this.state.tags];
+        const newTags = tags.slice();
+ 
+        newTags.splice(currPos, 1);
+        newTags.splice(newPos, 0, tag);
+ 
+        // re-render
+        this.setState({ tags: newTags });
+    }
 
     // handles file selection change
     handleChange = (e) => {
@@ -75,14 +97,15 @@ class Upload extends Component {
                 // upload the image to storage
                 app.storage().ref(`images/${this.context.state.logged}`).child(new_name).getDownloadURL().then((url) => {
                     let description = document.querySelector("#description").value;
-
+                    
                     // create photo object with image and other info
                     app.database().ref('/posts').child(uuid).set({
                         username: this.context.state.logged,
                         time: firebase.database.ServerValue.TIMESTAMP,
                         description: description,
                         image: url,
-                    }).then((snap) => {
+                        tags: this.state.tags.map((tag) => tag.id)
+                    }).then(() => {
                         // update logged users last_update time
                         app.database().ref(`/profile/${this.context.state.logged}/last_update`).set(firebase.database.ServerValue.TIMESTAMP)
                         
@@ -99,6 +122,7 @@ class Upload extends Component {
 
 
     render() {
+
         if(this.state.redirect) {
             let link = "/p/" + this.state.uuid
             return <Redirect to={link}/>
@@ -133,6 +157,13 @@ class Upload extends Component {
                     </div><br/>
 
                     <progress className="progress is-primary" ref={(progress) => this.progress = progress} style={{display: this.state.progress === true ? 'block' : 'none' }} max="100" ></progress>
+
+                    <ReactTags tags={this.state.tags}
+                        handleDelete={this.handleDelete}
+                        handleAddition={this.handleAddition}
+                        handleDrag={this.handleDrag}
+                        delimiters={[188, 13, 32]} />
+                    <br/>
 
                     <textarea id="description" className="textarea" placeholder="Description"></textarea><br/>
                     <button className="button is-primary" onClick={this.handleUpload}>Submit</button>   
